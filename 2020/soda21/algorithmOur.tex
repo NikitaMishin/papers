@@ -1,5 +1,123 @@
 \section{CutMax a new approximate mathing algorithm}
 \label{section:our}
+We now descibe several algorithms that heavily based on semi-local lcs and its underlying algebraic structure.
+
+The first algorithm \ref{alg:appximateMatchingGreedy} reffers to following constraint.
+There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similiarity score on the uncovered part of the text $t$ i.e algorithm should performs greedy choice at each step.
+
+First, semi-local sa problem is solved (Line 1).
+Then upon string-substring submatrix of semi-local sa solution is builded data structure for perforiming range queries in square martix (Lines 2-3).
+$IntervalsToSearch$ that holds text intervals where should be perfomed search.
+Lines 7-21 corresponds to seaching interval $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t$.
+More preciesely, it reffers to searching maximum value with corresponding position (row and column) in submatrix of string-substring $matrix$ within bounds for text starting at ith position and ending at jth position.
+It is solved via range queries (Line 9).
+After that if foun
+When detected $interval$ has alignment score less then therhsold it means that no clones of pattern $p$ is presented in this part of text $t$ and further processing should be skipped (Line 19).
+Otherwise, founded clone is added to final result and current part of text is splitted on two smaller part and procces in same way (Lines 13, 15).
+Finally,  algorithm outputs a set of non-intersected interval of clones of pattern p in text t.
+
+Theorem
+Algorithm \ref{alg:appximateMatchingGreedy} could be solved with total running time $O(|p|*|t|*|v|),$ and space $ O()$.
+The time complexity of solving semi-local sa is $O(|p|*|t|*|v|)$.
+Due to fact that semi-local matrix is Monge matrix.
+It allows using recent achievements in range maximum queries \cite{}.
+More preciesely, data structure for  range queries could be computed in O()
+time with O() space.
+Further, this data strucure allows to perform range query in o() time.
+
+Lines 7-21 basically  iterative version of recursion where at each level of recursion amount of quesries is doubles at worst case.
+The total amount of  nodes at each level is following.
+At the bottom level of recursion is $t$ nodes, next level is $t/2$, ith level is $t/2_{i}$.
+Thus, the overall amoount of nodes is $t+\frac{t}{2}+\frac{t}{4}+....1 = t*(1 + \frac{1}{2} + \frac{1}{4}+\frac{1}{2^{i}}) $ = sum.
+As mentioned above complexity of query is O().
+This time complexity of Lines 7-21 is O()....
+
+THEOREM
+WHen v=O(1) its 
+
+\begin{algorithm}[H]
+\caption{GREEDY-PATTERN BASED NEAR DUPLICATE
+SEARCH ALGORITHM VIA SEMI-LOCAL SA}
+\label{alg:appximateMatchingGreedy}
+Input: pattern $p$, text $t$, theshold value $h$\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+Pseudocode:
+\begin{algorithmic}[1]
+\STATE{$sa = semilocalsa(p,t)$}
+\STATE{$matrix = sa.getStringSubstringMatrix() $}
+\STATE{$rmQ2D = buildRMQStructure(matrix) $}
+\STATE{$intervalsToSearch = \emptyset $}
+\STATE{$intervalsToSearch.add((0,|t|)) $}
+\STATE{$result = \emptyset$}
+\WHILE{$intervalsToSearch.isNotEmpty()$}
+\STATE{$i,j = intervalsToSearch.pop()$ }
+\STATE{ $interval = rmQ2D.query(i, j, i, j) $ }
+   \IF{ $interval.score \geq threshold $}
+   \STATE{ $result.add(interval)$}
+   	\IF{$interval.startInclusive - i  \geq 1$}
+   	\STATE{$intervalsToSearch.add((i, interval.startInclusive))$}
+   	\ENDIF
+   	\IF{$j - interval.endExclusive   \geq 1$}
+   	\STATE{$intervalsToSearch.add((interval.endExclusive, j))$}
+   	\ENDIF
+   	
+   \ELSE 
+   \STATE $continue$ 
+   \ENDIF
+\ENDWHILE
+\RETURN $result$
+
+\end{algorithmic}
+\end{algorithm}
+
+
+The second algorithm uses simple approach.
+It TODOOOOOOOOOOOOOOOOOOOOOOO.
+
+description
+
+
+\begin{algorithm}[H]
+\caption{DFFF SEMI-LOCAL SA}
+\label{alg:appximateMatchingMax}
+Input: pattern $p$, text $t$, theshold value $h$\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+Pseudocode:
+\begin{algorithmic}[1]
+
+\STATE{$sa = semilocalsa(p,t)$}
+\STATE{$matrix = sa.getStringSubstringMatrix() $}
+\STATE{$colmax = smawk(matrix) $}
+\STATE{$colmax.filter { it.score >= realThreshold }.sortedByDescending { it.score } $}
+\STATE{$tree = buildIntervalTree()$}
+\FOR{$candidate in colmax$}
+\IF{$candidate is not intersected with tree$}
+\STATE{$tree.add(candidate)$}
+\ENDIF
+\ENDFOR
+\STATE{$result = tree.toList()$}
+\RETURN $result$
+\end{algorithmic}
+\end{algorithm}
+
+
+THEOREM
+runniing time and s oon
+
+
+
+THEOREM
+WHen v=O(1) its 
+
+Lest's look at the taks of approximate mathing from the different perspective and more intuitive way.
+  
+
+%Given some rope $t$ and small rope $p$ you need to make cuts to form small ropes $t_{i_{1},j_{1}},t_{i_{2},j_{2}}...,t_{i_{k},j_{k}}$ for some $k$ and select some of them that very similiar to  rope $p$ i.e have high similiarity score.
+%For that, we would consider constarint that each select of $t_{k} = t_{i_{k},j_{k}}$ should be made greedy i.e   $t_{k}$ it has the highest similiarity score against $p$ over all possible choices of      
+
+ 
+%The following interpretation can be applied.
+%Given text interval $t_{i}$   
 
 Descirbe algroithm.
 
