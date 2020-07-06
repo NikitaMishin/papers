@@ -1,8 +1,79 @@
 \section{Algorithm for near duplicate detection}
 \label{section:luciv}
+\red{TODO: third phase also may be imporved/ removed. By filtering in place.
+Also prserves property.
+ }
+
+We now describe an improved version of Luciv et.al. algorithm \cite{luciv2019interactive} by utilizing a \emph{semi-local sa} solution.
+Then we present proof that improved version preserves completnesess property.
+It is achieved by imitating all phases of the algorithm. 
+ 
+
+\subsection{Algorithm description}
+The algorithm comprises three phases as in \cite{luciv2019interactive}.
+At phase one (Line 1) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
+This solution provides access to the string-substring matrix which allows performing fast queries of sa score for pattern $p$ against every substring of text $t$.
+
+At the second phase text $t$ is scanning with a sliding window of length $L_{w}$ with step 1.
+First, it checks that given substring $w$ that of a maximum possible size of $L_{w}$ have score that is higher or equal to a given threshold (Line 4).
+If no, then this interval will not further be proceeded (Line 5) else this interval will be processed as follows.
+First, for each prefix of text $t$ it finds suffix that has the highest alignment score with the maximal length among all suffixes with that score. 
+It corresponds to the searching row position for each column in string-substring matrix with associated alignment score. 
+Second, among these suffixes, one is selected with the highest score.
+If several suffixes have the same score the one with maximal length is selected (Line 8).
+Then if selected suffix has score higher than the threshold, then it is added to set $W_2$.
+
+The third phase is the same as in \cite{luciv2019interactive}. 
+More precisely, on the third phrase, set $W_{2}$ is filtered out in a such way that only non-intersected intervals are left.
+It is simply the sorting of set $W_{3}$ by starts of intervals with following one way passage with filtering.  
+
+
+\begin{algorithm}[H]
+\caption{PATTERN BASED NEAR DUPLICATE
+SEARCH ALGORITHM VIA SEMI-LOCAL SA}
+\label{alg:patternMathing1}
+Input: pattern $p$, text $t$, similiarity measure $k \in  [ \frac{1}{\sqrt{3}} ,1  ]$\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$
+\begin{equation}
+    k_{di}=|p|*(\frac{1}{k}+1)(1-k^2)
+\end{equation}
+\begin{equation}
+ L_{w} = \frac{|p|} {k}
+\end{equation}
+Comment: $w_{i},w_{j}$ --- start and end positions of $w$ in text $t$ \\
+Pseudocode:
+\begin{algorithmic}[1]
+\STATE{$W = semilocalsa(p,t)$}
+\STATE{$W_2 = \emptyset$}
+\FOR{$w \in t,  |w| = L_{w}$}
+   \IF{ $W.stringSubstring(w_{i},w_{j}) < -k_{di}$}
+   %\IF{ $sa(p,w) \geq -k_{di}$}
+   \STATE{ \emph{continue}}
+   \ENDIF
+   \STATE{ $maximums = FindMaxForColumnsBySmawk(w)$}
+   \STATE{ $max = FindMaxWithLenghtConstraint(maximums)$}
+   \IF{$max \geq -k_{di}$}
+   %\COMMENT{In There there was min thus here is minus} 
+   \STATE{ add substring associated with max to $W_{2}$} 
+   \ENDIF
+\ENDFOR
+\STATE{ $W_3 = UNIQUE(W_2)$}
+\COMMENT{3rd phase unchanged}
+\FOR{$w \in W_3$}
+\IF{$\exists w^{'} \in W_3:w \subset w^{'} $}
+\STATE{ $remove$ $w$ $from$ $W_3$}
+\ENDIF
+
+\ENDFOR
+\RETURN $W_3$
+
+\end{algorithmic}
+\end{algorithm}
 
 Describe our algorithm and shows our optimization.
 
 Proof all properties satisified.
 
 Make note that not contraint on other metric???
+
+
