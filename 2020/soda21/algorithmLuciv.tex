@@ -9,6 +9,29 @@ It is achieved by imitating all phases of the algorithm.
  
 
 \subsection{Algorithm description}
+
+\red{NEWALGO}.
+Algorithm comprises of two phases.
+
+At phase one (Line 1) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
+
+At phase two the search of largest text fragment within every window of size $L_{w} =\frac{|p|}{k}$ is performed.
+Also the filtering of duplicate and intersected elements is perfomed in-place during this phase (this corresponds to third phase of \cite{luciv2019interactive}).
+Note that length for text fragments (clones) is bounded by $|p|*k...\frac{|p|}{k}$ interval.
+In terms of string-subsrtng matrix sliding window refers to square submatrix of size $L_{w}$.
+Moreoveor, sliding window with step 1 refers to sliding square windows that goes diagonally with one step.
+
+need piciutre.
+
+Thus, it means that diagonal in string-substrin matrix of width $|p|*k..\frac{|p|}{k}$ and lenght $|t|$ corresponds to diagonal in string-substring matrix.
+This means that it is sufficiently to visit only $O(\frac{|p|}{k} - |p|*k) * O(|t|) = O(|p||t|)$  cells to gain requiered text fragments.
+Now we describe how to visit this cells.
+
+
+
+\red{END NEW ALGO}
+
+
 The algorithm comprises three phases as in \cite{luciv2019interactive}.
 At phase one (Line 1) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
 This solution provides access to the string-substring matrix which allows performing fast queries of sa score for pattern $p$ against every substring of text $t$.
@@ -69,10 +92,21 @@ Pseudocode:
 \end{algorithmic}
 \end{algorithm}
 
-Describe our algorithm and shows our optimization.
 
-Proof all properties satisified.
+\begin{theorem}
+Algorithm \ref{alg:patternMathing1} could  be solved in $ O(|p| * |t| )$ where $p$ is pattern, $t$ is text.
 
-Make note that not contraint on other metric???
+\red{Proof it}
+\begin{displaymath}
+    D = \diag(d_1,\dots,d_n)
+  \end{displaymath}
+\end{theorem}
 
+\begin{theorem}
+Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive}.
 
+\red{Proof it}
+\begin{displaymath}
+    D = \diag(d_1,\dots,d_n)
+  \end{displaymath}
+\end{theorem}
