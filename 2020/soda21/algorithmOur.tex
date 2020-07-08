@@ -91,29 +91,29 @@ The building process comprises from checking that current substring $candidate$ 
 Finally, algorithm output set of non-intersected substrings (clones) of pattern $p$ in text $t$.
 
 
-%\begin{algorithm}[H]
-%\caption{Greedy approximate}
-%\label{alg:appximateMatchingMax}
-%Input: pattern $p$, text $t$, theshold value $h$\\
-%Output: Set of non-intersected clones of pattern $p$ in text $t$\\
-%Pseudocode:
-%\begin{algorithmic}[1]
+\begin{algorithm}[H]
+\caption{Greedy approximate}
+\label{alg:appximateMatchingMax}
+Input: pattern $p$, text $t$, theshold value $h$\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+Pseudocode:
+\begin{algorithmic}[1]
 
-%\STATE{$sa = semilocalsa(p,t)$}
-%\STATE{$matrix = sa.getStringSubstringMatrix() $}
-%\STATE{$colmax = smawk(matrix) $}
-%\STATE{$colmax = colmax.filter(it.score >= h$)}
-%\STATE{$colmax = colmax.sortedByDescending(it.score)$}
-%\STATE{$tree = buildIntervalTree()$}
-%\FOR{$candidate \in colmax$}
-%\IF{$candidate \cap tree = \emptyset $}
-%\STATE{$tree.add(candidate)$}
-%\ENDIF
-%\ENDFOR
-%\STATE{$result = tree.toList()$}
-%\RETURN $result$
-%\end{algorithmic}
-%\end{algorithm}
+\STATE{$sa = semilocalsa(p,t)$}
+\STATE{$matrix = sa.getStringSubstringMatrix() $}
+\STATE{$colmax = smawk(matrix) $}
+\STATE{$colmax = colmax.filter(it.score >= h$)}
+\STATE{$colmax = colmax.sortedByDescending(it.score)$}
+\STATE{$tree = buildIntervalTree()$}
+\FOR{$candidate \in colmax$}
+\IF{$candidate \cap tree = \emptyset $}
+\STATE{$tree.add(candidate)$}
+\ENDIF
+\ENDFOR
+\STATE{$result = tree.toList()$}
+\RETURN $result$
+\end{algorithmic}
+\end{algorithm}
 
 \begin{theorem}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in
