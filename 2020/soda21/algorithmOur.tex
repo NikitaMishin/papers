@@ -60,19 +60,26 @@ Pseudocode:
 \end{algorithm}
 
 
-The second algorithm \ref{alg:appximateMatchingMax} uses a simple approach and more lightweight but found fewer duplicates of pattern $p$.
-\red{How to describe formally it }
-First, we solve the semi-local sa problem (Line 1).
+The second algorithm \ref{alg:appximateMatchingMax} uses a less sophisticated approach and a more lightweight one but found fewer duplicates of pattern $p$(see example \ref{}).
+The algorithm also follows a greedy approach but instead of looking at the uncovered part of text $t$ at each step it looks at the text $t$ and chooses the first available substring with the highest score that doesn't intersect with already taken substrings.
+More formally, it approximates algorithm \ref{alg:appximateMatchingGreedy}.
+
+\paragraph{Algorithm description}
+First, the \emph{semi-loca sa} problem is solved (Line 1).
 Then we solve \emph{complete approximate matching problem} (Line 3) i.e
-for each prefix of text $t$ we find the shortest suffix that has the highest similarity score.
-Further, we filter out suffixes that have a similarity score greater or equal to the threshold value (Line 4) and sort remaining suffixes by score (Line 5).
-Then we process each candidate from this suffix and form non-intersected intervals of clones of pattern $p$ (Line 7-12).
-It is performed by the incremental build of the interval tree.
-If the current candidate not intersected with any clone in tree, then we could add it a tree.
-Finally, a set of the non-intersected interval is returned. 
+for each prefix of text $t$ we find the shortest suffix that has the highest similarity score with pattern $p$ (Line 3):
+\begin{equation}
+    a[j] = \max _{i \in 0 ..j} sa(p,t[i,j]), j \in 0..|t|
+\end{equation}
+
+Further, we remove suffixes whose similarity is below the given threshold $h$ (Line 4).
+Then remaining suffixes are sorted in descending order (Line 5) and the interval tree is built upon them (Lines 7-11).
+The building process comprises from checking that current substring $candidate$ not intersected with already added substrings to $tree$ and adding it to $tree$.
+Finally, algorithm output set of non-intersected substrings (clones) of pattern $p$ in text $t$.
+
 
 \begin{algorithm}[H]
-\caption{DFFF SEMI-LOCAL SA}
+\caption{Greedy approximate}
 \label{alg:appximateMatchingMax}
 Input: pattern $p$, text $t$, theshold value $h$\\
 Output: Set of non-intersected clones of pattern $p$ in text $t$\\
@@ -86,7 +93,7 @@ Pseudocode:
 \STATE{$colmax = colmax.sortedByDescending(it.score)$}
 \STATE{$tree = buildIntervalTree()$}
 \FOR{$candidate \in colmax$}
-\IF{$candidate$ $is not$ $intersected with tree$}
+\IF{$candidate \cap tree = \emptyset $}
 \STATE{$tree.add(candidate)$}
 \ENDIF
 \ENDFOR
@@ -96,9 +103,48 @@ Pseudocode:
 \end{algorithm}
 
 \begin{theorem}
+Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
+$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
+$w_{normalized} = (1,\frac{\mu}{v},0)$ assuming we are storing solution matrix implicitly.
+
+As shown in section \ref{section:preliminaries} the time complexity 
+of solving $semi-local sa$ is $O(|p|*|t|*|v|)$ respectevely.
+The space complexity of storing monge matrix of semi-local solution is
+$O(|t| * v * \log {|t| * v })$ at most due to fact that $v-subbistochastic matrix$ has at most $v$ non-zeros in each row and upon $v * |t|$ points we 
+build range tree data structure that \red{??}.
+
+$SMAWK$ algorithm requires $O(|t|*q)$ time where $q$ stands for time complexity of  random access of monge matrix.
+Thus, the  total time complexity of line 3 is \red{$O(|t|*?)$ }.
+Filtering and sorting have at most $O(|t|)$ and $O(|t|log|t|)$ time complexity.
+In Line 6 simple intialization of interval tree is perfomed.   
+ 
+ 
+
+\end{theorem}
+
+
+\begin{corollary}
+Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
+$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
+\end{corollary}
+
+\begin{corollary}
+Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
+$ O(|p| * |t| * v )$ when  and amount of clones is small.
+
+When amount of clones is relatively small and threshold value is set high  then after filtering out $t$ intervals (Line 4) sorting is perfomed on s small set of elements.
+Thus this part is dominated by calculating semi-local sa solution.
+\end{corollary}
+
+
+
+
+\begin{theorem}
 Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
 $\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
 $w_{normalized} = (1,\frac{\mu}{v},0)$.
+
+On the first phase of alg
 
 The first phase of algorithm requires $O(|p| * |t| * v)$ with $O(|t| * v)$ additional space for stroring monge matrix implicitly.
 We denote this matrix, specifically it's lower-left quadrant that refers to
@@ -127,30 +173,7 @@ $\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
 \end{corollary}
 
 
-\begin{theorem}
-Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
-$w_{normalized} = (1,\frac{\mu}{v},0)$.
 
-\red{Proof it}
-\begin{displaymath}
-    D = \diag(d_1,\dots,d_n)
-  \end{displaymath}
-\end{theorem}
-
-
-\begin{corollary}
-Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
-\end{corollary}
-
-\begin{corollary}
-Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$ O(|p| * |t| * v )$ when  and amount of clones is small.
-
-When amount of clones is relatively small and threshold value is set high  then after filtering out $t$ intervals (Line 4) sorting is perfomed on s small set of elements.
-Thus this part is dominated by calculating semi-local sa solution.
-\end{corollary}
 
   
 
