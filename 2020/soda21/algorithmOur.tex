@@ -65,7 +65,7 @@ The algorithm also follows a greedy approach but instead of looking at the uncov
 More formally, it approximates algorithm \ref{alg:appximateMatchingGreedy}.
 
 \paragraph{Algorithm description}
-First, the \emph{semi-loca sa} problem is solved (Line 1).
+First, the \emph{semi-local sa} problem is solved (Line 1).
 Then we solve \emph{complete approximate matching problem} (Line 3) i.e
 for each prefix of text $t$ we find the shortest suffix that has the highest similarity score with pattern $p$ (Line 3):
 \begin{equation}
@@ -103,21 +103,30 @@ Pseudocode:
 \end{algorithm}
 
 \begin{theorem}
-Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
+Algorithm \ref{alg:appximateMatchingMax} could  be solved in
+$\max (O(|p|*|t|*|v|), O(|t|* \log^2 |t| v))$ time with $O(|t| * v * \log {|t| * v })$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
 $w_{normalized} = (1,\frac{\mu}{v},0)$ assuming we are storing solution matrix implicitly.
 
+\emph{First phase}.
 As shown in section \ref{section:preliminaries} the time complexity 
-of solving $semi-local sa$ is $O(|p|*|t|*|v|)$ respectevely.
+of solving $semi-local sa$ is $O(|p|*|t|*|v|)$.
 The space complexity of storing monge matrix of semi-local solution is
-$O(|t| * v * \log {|t| * v })$ at most due to fact that $v-subbistochastic matrix$ has at most $v$ non-zeros in each row and upon $v * |t|$ points we 
-build range tree data structure that \red{??}.
+$O(|t| * v * \log {|t| * v })$ at most due to fact that $v-subbistochastic matrix$ has at most $v$ non-zeros in each row and upon these $v * |t|$ points we 
+build two dimensional range tree data structure with $|t| * v * \log {|t| * v }$ nodes that have report range sum queries in $O(\log^2 |t| v)$ time.
 
+\emph{Second phase}.
 $SMAWK$ algorithm requires $O(|t|*q)$ time where $q$ stands for time complexity of  random access of monge matrix.
-Thus, the  total time complexity of line 3 is \red{$O(|t|*?)$ }.
-Filtering and sorting have at most $O(|t|)$ and $O(|t|log|t|)$ time complexity.
-In Line 6 simple intialization of interval tree is perfomed.   
- 
+Thus, the  total time complexity of line 3 is $O(|t|* \log^2 |t| v)$ .
+Filtering and sorting have at most $O(|t|)$ and $O(|t|*log|t|)$ time complexity.
+In Line 6 simple intialization of interval tree is perfomed that requires $O(1)$.
+
+\emph{Third phase}
+$colmax$ array has as worst case $O(|t|)$ elements when filtering does not eliminate any substrings.
+Thus, adding to interval tree (both operation at most require $O(\log |t|)$ time) as well as intersection in (Lines 8-9) will be perfomed at most $O(|t|)$.
+Thus, the total complexity of last phase is $O(|t|* \log t)$.
+
+As we see, the third  phase is dominated by the second phase in terms of running time and second phase is dominated by the space complexity of third phase. 
+Thereby,the total time and space complexity is $\max (O(|p|*|t|*|v|), O(|t|* \log^2 |t| v))$ and $O(|t| * v * \log {|t| * v })$  respectively.
  
 
 \end{theorem}
@@ -126,14 +135,17 @@ In Line 6 simple intialization of interval tree is perfomed.
 \begin{corollary}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
 $\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
+
+When $v = O(1)$ we will use simple range tree for orthogonal range queries with  $O(log|t|)$ query time.
+
 \end{corollary}
 
 \begin{corollary}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$ O(|p| * |t| * v )$ when  and amount of clones is small.
+$O(|p| * |t|)$.
 
 When amount of clones is relatively small and threshold value is set high  then after filtering out $t$ intervals (Line 4) sorting is perfomed on s small set of elements.
-Thus this part is dominated by calculating semi-local sa solution.
+Thus, this part is dominated by calculating semi-local sa solution.
 \end{corollary}
 
 
