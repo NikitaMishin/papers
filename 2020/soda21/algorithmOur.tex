@@ -3,18 +3,23 @@
 We now describe several algorithms that heavily based on semi-local lcs and it's underlying algebraic structure.
 
 The first algorithm \ref{alg:appximateMatchingGreedy} refers to following constraint.
-There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $l \geq |tau_{i}| \geq r$  i.e algorithm should perform greedy choice at each step with length constraint.
-This is a more intuitive approach i.e like looking for the most similar one every time that have enough. 
+There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ i.e algorithm should perform greedy choice at each step. 
+%$l \geq |tau_{i}| \geq r$  i.e algorithm should perform greedy choice at each step with length constraint.
+This is a more intuitive approach i.e like looking for the most similar one every time. 
+\red{Formally}:
+\begin{equation}
+   \tau_{i} =  \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, t_{l,r}  \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
+\end{equation}
 
 The algorithm proceeds as follows.
-First, semi-local sa problem is solved (Line 1).
-Then upon string-substring submatrix of semi-local sa solution is built data structure for performing range queries on it (Lines 2-3).
-$IntervalsToSearch$ is structure that holds text intervals where search should be perfomed.
-Lines 7-21 corresponds to seaching $interval$ with maximal alignment within the current uncovered part of the text $t_{i,j}$.
-More precisely, it refers to searching maximum value with corresponding position (row and column) in submatrix of string-substring $matrix$ within  $t_{i,j}$ (starting at $i$th position and ending at $j$th position of text $t$.
- It is solved via range queries (Line 9).
-When detected $interval$ has alignment score less then threshold it means that no clones of pattern $p$ are presented in this part of text $t_{i,j}$, and further processing should be skipped (Line 19).
-Otherwise, the founded clone is added to final result and the current part of the text splits on two smaller parts and processed in the same way (Lines 13, 15).
+First, upon string-substring Monge matrix $M$ of semi-local solution is built data structure for performing range queries on it denoted by $rmq2D$ (Lines 1).
+
+Second, algorthm make recursive call to subroutine $greedy$.
+The $greedy$ routine perfoms greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$.
+More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within  $t_{i,j}$ (starting at $i$th position and ending at $j$th position of text $t$.
+It is solved via range queries.
+When detected $interval$ has alignment score less then threshold it means that no clones of pattern $p$ are presented in this part of text $t_{i,j}$, and further processing should be skipped.
+Otherwise, the founded clone is added to final result and the current part of the text splits on two smaller parts and processed in the same way.
 Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern p in text t.
 
 %Lines 7-21 basically  iterative version of recursion where at each level of recursion amount of quesries is doubles at worst case.
@@ -25,37 +30,45 @@ Finally, the algorithm outputs a set of the non-intersected intervals of clones 
 %This time complexity of Lines 7-21 is O()....
 
 \begin{algorithm}[H]
-\caption{GREEDY-PATTERN BASED NEAR DUPLICATE
-SEARCH ALGORITHM VIA SEMI-LOCAL SA}
-\label{alg:appximateMatchingGreedy}
-Input: pattern $p$, text $t$, theshold value $h$\\
-Output: Set of non-intersected clones of pattern $p$ in text $t$\\
-Pseudocode:
-\begin{algorithmic}[1]
-\STATE{$sa = semilocalsa(p,t)$}
-\STATE{$matrix = sa.getStringSubstringMatrix() $}
-\STATE{$rmQ2D = buildRMQStructure(matrix) $}
-\STATE{$intervalsToSearch = \emptyset $}
-\STATE{$intervalsToSearch.add((0,|t|)) $}
-\STATE{$result = \emptyset$}
-\WHILE{$intervalsToSearch.isNotEmpty()$}
-\STATE{$i,j = intervalsToSearch.pop()$ }
-\STATE{ $interval = rmQ2D.query(i, j, i, j) $ }
-   \IF{ $interval.score \geq h $}
-   \STATE{ $result.add(interval)$}
-   	\IF{$interval.startInclusive - i  \geq 1$}
-   	\STATE{$intervalsToSearch.add((i, interval.startInclusive))$}
-   	\ENDIF
-   	\IF{$j - interval.endExclusive   \geq 1$}
-   	\STATE{$intervalsToSearch.add((interval.endExclusive, j))$}
-   	\ENDIF
-   	
-   \ELSE 
-   \STATE $continue$ 
-   \ENDIF
-\ENDWHILE
-\RETURN $result$
+\caption{Greedy subroutine}
+\label{alg:rec}
+Input: $rmq2D$--- range maximum query data structure for perfoming range queries on monge matrix $M$, $h$ --- theshold value, $i,j$ --- start and end positions of current text $t_{i,j}$ \\
+Output: Set of non-intersected intervals from $t_{i,j}$\\
+Pseudocode:\\
+$greedy(rmq2D,h, i, j, t_{i,j} ):$
 
+\begin{algorithmic}[1]
+\STATE{$interval = rmq2D.query(i,j,i,j)$}
+\STATE{$result = \emptyset$}
+\IF{ $interval.score < h $}
+\RETURN $result$
+\ENDIF
+\IF{ $interval.i - i \geq 1 $}
+\STATE{$cl = greedy(rmq2D,h,t_{i,interval.i})$}
+\STATE{$result.add(cl)$}
+\ENDIF
+\IF{$j - interval.j \geq 1$}
+\STATE{$cl = greedy(rmq2D,h,t_{j,interval.j})$}
+\STATE{$result.add(cl)$}
+\ENDIF
+\RETURN $result$
+\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}[H]
+\caption{GREEDY-PATTERN BASED NEAR DUPLICATE
+SEARCH ALGORITHM}
+\label{alg:appximateMatchingGreedy}
+Input: monge matrix $M$ that correspond to string-substring matrix 
+for pattern $p$ and text $t$, theshold value $h$\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+Pseudocode:\\
+$GreedyMathing(M,h,t)$
+\begin{algorithmic}[1]
+\STATE{$rmq2D = buildRMQStructure(M) $}
+\STATE{$result = greedy(rmq2D,0,|t|,t)$}
+\RETURN $result$
 \end{algorithmic}
 \end{algorithm}
 
@@ -78,29 +91,29 @@ The building process comprises from checking that current substring $candidate$ 
 Finally, algorithm output set of non-intersected substrings (clones) of pattern $p$ in text $t$.
 
 
-\begin{algorithm}[H]
-\caption{Greedy approximate}
-\label{alg:appximateMatchingMax}
-Input: pattern $p$, text $t$, theshold value $h$\\
-Output: Set of non-intersected clones of pattern $p$ in text $t$\\
-Pseudocode:
-\begin{algorithmic}[1]
+%\begin{algorithm}[H]
+%\caption{Greedy approximate}
+%\label{alg:appximateMatchingMax}
+%Input: pattern $p$, text $t$, theshold value $h$\\
+%Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+%Pseudocode:
+%\begin{algorithmic}[1]
 
-\STATE{$sa = semilocalsa(p,t)$}
-\STATE{$matrix = sa.getStringSubstringMatrix() $}
-\STATE{$colmax = smawk(matrix) $}
-\STATE{$colmax = colmax.filter(it.score >= h$)}
-\STATE{$colmax = colmax.sortedByDescending(it.score)$}
-\STATE{$tree = buildIntervalTree()$}
-\FOR{$candidate \in colmax$}
-\IF{$candidate \cap tree = \emptyset $}
-\STATE{$tree.add(candidate)$}
-\ENDIF
-\ENDFOR
-\STATE{$result = tree.toList()$}
-\RETURN $result$
-\end{algorithmic}
-\end{algorithm}
+%\STATE{$sa = semilocalsa(p,t)$}
+%\STATE{$matrix = sa.getStringSubstringMatrix() $}
+%\STATE{$colmax = smawk(matrix) $}
+%\STATE{$colmax = colmax.filter(it.score >= h$)}
+%\STATE{$colmax = colmax.sortedByDescending(it.score)$}
+%\STATE{$tree = buildIntervalTree()$}
+%\FOR{$candidate \in colmax$}
+%\IF{$candidate \cap tree = \emptyset $}
+%\STATE{$tree.add(candidate)$}
+%\ENDIF
+%\ENDFOR
+%\STATE{$result = tree.toList()$}
+%\RETURN $result$
+%\end{algorithmic}
+%\end{algorithm}
 
 \begin{theorem}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in
