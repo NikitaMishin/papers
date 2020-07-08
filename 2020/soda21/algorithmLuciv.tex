@@ -10,20 +10,44 @@ It is achieved by imitating all phases of the algorithm.
 
 \subsection{Algorithm description}
 
-\red{NEWALGO}.
+\red{NEWALGO}.NEED DISCUSS
 Algorithm comprises of two phases.
 
-At phase one (Line 1) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
+At phase one (Line 1) \emph{semi-local sa} problem is solved for the pattern $p$ against whole text $t$.
+After that phase we have access to string-substring matrix $H^{str-sub}_{p,t}$ that implicitly stores scores for any substring of text $t$ against pattern $p$.
 
-At phase two the search of largest text fragment within every window of size $L_{w} =\frac{|p|}{k}$ is performed.
+At phase two  text is processed via sliding window of size $L_{w} =\frac{|p|}{k}$.
+If alignment score between substring that corresponds to window position
+and pattern $p$ is $\geq k_{di} $(ref to previous section described luciv algo) then this we proceed as follows.
+
+We search of largest text fragment within  this window
+
+
+At phase two the largest text fragment that closest 
+
+
+At phase two the search of largest text fragment with highest score  within every sliding  window of size $L_{w} =\frac{|p|}{k}$ of text $t$ is performed.
+More preciesely, we looking for the text fragment that have maximal score with pattern $p$ across all substrings with sizes $|p|*k...\frac{|p|}{k}$ within each sliding window.
+It corresponds to looking at the square submatrices within $H^{str-sub}_{p,t}$  with $\frac{|p|}{k}-|p|*k$ sizes (see picture).
+Let's look closely  to concrete submatrix (denote it by $M$).
+The intresting cells lies in upper-right part
+Let's denote it by $m$
+In other words, we need to find at the submatrix  
+
+
+
+
+
+
 Also the filtering of duplicate and intersected elements is perfomed in-place during this phase (this corresponds to third phase of \cite{luciv2019interactive}).
-Note that length for text fragments (clones) is bounded by $|p|*k...\frac{|p|}{k}$ interval.
+
 In terms of string-subsrtng matrix sliding window refers to square submatrix of size $L_{w}$.
-Moreoveor, sliding window with step 1 refers to sliding square windows that goes diagonally with one step.
+Moreoveor, sliding window with step 1 refers to sliding square windows that goes diagonally with one step (see picture).
+Thus, it means that diagonal in string-substring matrix of width $|p|*k..\frac{|p|}{k}$ and length $|t|$ corresponds to diagonal in string-substring matrix.
 
-need piciutre.
 
-Thus, it means that diagonal in string-substrin matrix of width $|p|*k..\frac{|p|}{k}$ and lenght $|t|$ corresponds to diagonal in string-substring matrix.
+
+
 This means that it is sufficiently to visit only $O(\frac{|p|}{k} - |p|*k) * O(|t|) = O(|p||t|)$  cells to gain requiered text fragments.
 Now we describe how to visit this cells.
 

@@ -3,8 +3,8 @@
 We now describe several algorithms that heavily based on semi-local lcs and it's underlying algebraic structure.
 
 The first algorithm \ref{alg:appximateMatchingGreedy} refers to following constraint.
-There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ i.e algorithm should perform greedy choice at each step.
-This is a more intuitive approach i.e like looking for the most similar one every time. 
+There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $l \geq |tau_{i}| \geq r$  i.e algorithm should perform greedy choice at each step with length constraint.
+This is a more intuitive approach i.e like looking for the most similar one every time that have enough. 
 
 The algorithm proceeds as follows.
 First, semi-local sa problem is solved (Line 1).
@@ -99,6 +99,19 @@ Pseudocode:
 Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
 $\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
 $w_{normalized} = (1,\frac{\mu}{v},0)$.
+
+The first phase of algorithm requires $O(|p| * |t| * v)$ with $O(|t| * v)$ additional space for stroring monge matrix implicitly.
+We denote this matrix, specifically it's lower-left quadrant that refers to
+string-substring solution as $M$ with size $|t| \times |t|$.
+
+
+  Theorema 3.4
+First, note that 
+
+Building structure for rmq queries for staircase matrix requires 
+Theorem 5.8. Given an n × n partial Monge matrix M, a data structure of size O(n) can be con-
+structed in O(n logn) time to answer submatrix maximum queries in O(log logn) time.
+   
 
 \red{Proof it}
 \begin{displaymath}
