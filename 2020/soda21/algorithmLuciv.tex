@@ -1,7 +1,5 @@
 \section{Algorithm for near duplicate detection}
 \label{section:luciv}
-\red{TODO: third phase also may be imporved/ removed. By filtering in place.
-Also prserves property.}
 
 We now describe an improved version of Luciv et.al. algorithm \cite{luciv2019interactive} by utilizing a \emph{semi-local sa} solution.
 Then we present proof that improved version preserves completnesess property.
@@ -10,68 +8,50 @@ It is achieved by imitating all phases of the algorithm.
 
 \subsection{Algorithm description}
 
-\red{NEWALGO}.NEED DISCUSS
-Algorithm comprises of two phases.
-
-At phase one (Line 1) \emph{semi-local sa} problem is solved for the pattern $p$ against whole text $t$.
-After that phase we have access to string-substring matrix $H^{str-sub}_{p,t}$ that implicitly stores scores for any substring of text $t$ against pattern $p$.
-
-At phase two  text is processed via sliding window of size $L_{w} =\frac{|p|}{k}$.
-If alignment score between substring that corresponds to window position
-and pattern $p$ is $\geq k_{di} $(ref to previous section described luciv algo) then this we proceed as follows.
-
-We search of largest text fragment within  this window
-
-
-At phase two the largest text fragment that closest 
-
-
-At phase two the search of largest text fragment with highest score  within every sliding  window of size $L_{w} =\frac{|p|}{k}$ of text $t$ is performed.
-More preciesely, we looking for the text fragment that have maximal score with pattern $p$ across all substrings with sizes $|p|*k...\frac{|p|}{k}$ within each sliding window.
-It corresponds to looking at the square submatrices within $H^{str-sub}_{p,t}$  with $\frac{|p|}{k}-|p|*k$ sizes (see picture).
-Let's look closely  to concrete submatrix (denote it by $M$).
-The intresting cells lies in upper-right part
-Let's denote it by $m$
-In other words, we need to find at the submatrix  
-
-
-
-
-
-
-Also the filtering of duplicate and intersected elements is perfomed in-place during this phase (this corresponds to third phase of \cite{luciv2019interactive}).
-
-In terms of string-subsrtng matrix sliding window refers to square submatrix of size $L_{w}$.
-Moreoveor, sliding window with step 1 refers to sliding square windows that goes diagonally with one step (see picture).
-Thus, it means that diagonal in string-substring matrix of width $|p|*k..\frac{|p|}{k}$ and length $|t|$ corresponds to diagonal in string-substring matrix.
-
-
-
-
-This means that it is sufficiently to visit only $O(\frac{|p|}{k} - |p|*k) * O(|t|) = O(|p||t|)$  cells to gain requiered text fragments.
-Now we describe how to visit this cells.
-
-
-
-\red{END NEW ALGO}
-
-
 The algorithm comprises three phases as in \cite{luciv2019interactive}.
-At phase one (Line 1) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
-This solution provides access to the string-substring matrix which allows performing fast queries of sa score for pattern $p$ against every substring of text $t$.
+At phase one (Lines 1-3) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
+This solution provides access to the string-substring matrix $H^{str-sub}_{p,t}$ which allows performing fast queries of \emph{sa} score for pattern $p$ against every substring of text $t$.
+We apply implicitly transposition and inverse operation on $H^{str-sub}_{p,t}$:
 
-At the second phase text $t$ is scanning with a sliding window of length $L_{w}$ with step 1.
-First, it checks that given substring $w$ that of a maximum possible size of $L_{w}$ have score that is higher or equal to a given threshold (Line 4).
-If no, then this interval will not further be proceeded (Line 5) else this interval will be processed as follows.
-First, for each prefix of text $t$ it finds suffix that has the highest alignment score with the maximal length among all suffixes with that score. 
-It corresponds to the searching row position for each column in string-substring matrix with associated alignment score. 
-Second, among these suffixes, one is selected with the highest score.
-If several suffixes have the same score the one with maximal length is selected (Line 8).
-Then if selected suffix has score higher than the threshold, then it is added to set $W_2$.
+\begin{equation}
+	M[j,i]:= -H^{str-sub}_{p,t}[i,j]
+\end{equation}
+Note that, inverse operataion preserves (\emph{anti}) \emph{Monge} property whereas inverse operation make \emph{anti Monge} matrix \emph{Monge} and vice versa. 
+So, matrix $M$ is \emph{Monge} matrix.
 
-The third phase is the same as in \cite{luciv2019interactive}. 
-More precisely, on the third phrase, set $W_{2}$ is filtered out in a such way that only non-intersected intervals are left.
-It is simply the sorting of set $W_{3}$ by starts of intervals with following one way passage with filtering.  
+The second phase consist of several steps (Lines 4-6).
+First, we want to obtain for each prefix of the text $t$ a longest suffix that have a highest similarity with given pattern $p$ with following constarint.
+The lengths of obtained suffixies should be in $|p|*k..\frac{|p|}{k}$ interval where $k \in [\frac{1}{\sqrt{3}},1]$.
+It could be done in several way.
+For example, direct pass through diagonal with width $w:= \frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ in $H^{str-sub}_{p,t}$ (see fig) or in $M$ (see fig).
+The other approach is following.
+Note that in  $M$ is \emph{Monge matrix} and  indices is swapped.
+It allows us to descry this diagonal as approximately $|t|$ square windows of size $wxw$ i.e a sliding window of step 1 that goes diagonally.
+Due to lenght constraint we only interesting in elements that lies in main diagonal and below it.
+Each of this $W:=wxw$ matrix is \emph{Monge matrix} by definition.
+This implies that $W$ also totally monotone.
+If we set to $+\inf$ that lies above diagonal that matrix will remain totally monotone.
+Thus, we can apply \emph{SMAWK} algorithm to this matrix to find leftmost element that has minimum in a given row with corresponding column position.
+For our case leftmost means that for each prefix algorithm will detect longest suffix (remember that $M$ is transposed $H^{str-sub}_{p,t}$ ).
+
+Second step, it is simply one way pass through these suffixes with sliding window  of size $\frac{|p|}{t}$ to find for each window most similar suffix with the longest length. Then resulting set is filtered out that remaining suffixes have score greater or equal to given theshold $-k_{di}$. 
+
+The third phase is same as in \cite{luciv2019interactive} (Lines 8-12).  
+
+
+
+%At the second phase text $t$ is scanning with a sliding window of length $L_{w}$ with step 1.
+%First, it checks that given substring $w$ that of a maximum possible size of $L_{w}$ have score that is higher or equal to a given threshold (Line 4).
+%If no, then this interval will not further be proceeded (Line 5) else this interval will be processed as follows.
+%First, for each prefix of text $t$ it finds suffix that has the highest alignment score with the maximal length among all suffixes with that score. 
+%It corresponds to the searching row position for each column in string-substring matrix with associated alignment score. 
+%Second, among these suffixes, one is selected with the highest score.
+%If several suffixes have the same score the one with maximal length is selected (Line 8).
+%Then if selected suffix has score higher than the threshold, then it is added to set $W_2$.
+
+%The third phase is the same as in \cite{luciv2019interactive}. 
+%More precisely, on the third phrase, set $W_{2}$ is filtered out in a such way that only non-intersected intervals are left.
+%It is simply the sorting of set $W_{3}$ by starts of intervals with following one way passage with filtering.  
 
 
 \begin{algorithm}[H]
@@ -86,30 +66,25 @@ Output: Set of non-intersected clones of pattern $p$ in text $t$
 \begin{equation}
  L_{w} = \frac{|p|} {k}
 \end{equation}
-Comment: $w_{i},w_{j}$ --- start and end positions of $w$ in text $t$ \\
+\begin{equation}
+  w = |p|(\frac{1}{k} - k)
+\end{equation}
 Pseudocode:
 \begin{algorithmic}[1]
 \STATE{$W = semilocalsa(p,t)$}
-\STATE{$W_2 = \emptyset$}
-\FOR{$w \in t,  |w| = L_{w}$}
-   \IF{ $W.stringSubstring(w_{i},w_{j}) < -k_{di}$}
-   %\IF{ $sa(p,w) \geq -k_{di}$}
-   \STATE{ \emph{continue}}
-   \ENDIF
-   \STATE{ $maximums = FindMaxForColumnsBySmawk(w)$}
-   \STATE{ $max = FindMaxWithLenghtConstraint(maximums)$}
-   \IF{$max \geq -k_{di}$}
-   %\COMMENT{In There there was min thus here is minus} 
-   \STATE{ add substring associated with max to $W_{2}$} 
-   \ENDIF
-\ENDFOR
+\COMMENT{1st phase}
+\STATE{$H^{str-sub}_{p,t} = semilocalsa(p,t).stringSubstringMatrix$}
+\STATE{$M[j,i] = -H^{str-sub}_{p,t}[i,j]  $}
+\STATE{$sufixes = processDiagonal(M,L)$}
+\COMMENT{2d phase}
+\STATE{$W_2 = SuffixMaxForEachWindow(sufixes,L_{w})$}
+\STATE{$filter(W_2,k_{di})$}
 \STATE{ $W_3 = UNIQUE(W_2)$}
 \COMMENT{3rd phase unchanged}
 \FOR{$w \in W_3$}
 \IF{$\exists w^{'} \in W_3:w \subset w^{'} $}
 \STATE{ $remove$ $w$ $from$ $W_3$}
 \ENDIF
-
 \ENDFOR
 \RETURN $W_3$
 
