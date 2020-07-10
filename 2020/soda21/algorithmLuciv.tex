@@ -93,13 +93,54 @@ Pseudocode:
 
 
 \begin{theorem}
-Algorithm \ref{alg:patternMathing1} could  be solved in $ O(|p| * |t| )$ where $p$ is pattern, $t$ is text.
-
-\red{Proof it}
-\begin{displaymath}
-    D = \diag(d_1,\dots,d_n)
-  \end{displaymath}
+Algorithm \ref{alg:patternMathing1} could  be solved in
+ $max(O(tp),O(t \log t))$  time with $O(t \log t)$ additional space where $p$ is pattern, $t$ is text when $|p| \leq |t|$, $v=O(1)$ where $v$ is denominator of normalized mismatch score for \emph{semi-local sa}
+$w_{normalized} = (1,\frac{\mu}{v},0)$.
 \end{theorem}
+
+For each phases of algorithm we provide it's time and space bounds.
+
+\paragraph{First phase}.
+
+For storing \emph{semi-local lcs} solution, specifically decomposed kernel $P$ we will use simply two list (two permuations) of size at most $v*|t|$ each because kernel $P$ has at most $v|t|$ non zeros (after we use $blow-up$ tecnique).
+Due to fact that $v = O(1)$    $O(v*|t|)$ becomes $O(|t|)$.
+Note that for such simple data structure to make random access to $P$ we need to calculate amount of poinst that dominated by given point. It require to check at most   $O(|t|)$ points. 
+Thus, random access query is $O(|t|)$.
+
+The solution of $semi-local sa$ when $v=O(1)$ is just $O(|t|*p)$.
+
+The total bounds for time and space complexity for this phase is at most $O(|t|*p)$ and $O(|t|)$ correspondingly.
+
+\paragraph{Second phase}
+We omit $k$ factor in analysis because when k $\in [\frac{1}{\sqrt{3}},1]$ $O(k) = 1$
+
+We will use first approach described in algorithm description for this phase.
+First, although the random access query to matrix element require $O(t)$.
+We only need one such query to step on the diagonal.
+Further we use \red{Theorem about adjacent cell query} that allows us to perform $O(1)$ access to adjacent elements for given $i,j$ cell in matrix $M$.
+Thus, the visit of each cell in diagonal of size at most $O(t) \times O(p) $ require at most $1$ random access and $O(t*p -1) =O(t*p)$ adjacent accesses.
+When we pass through slice of specific column we also will find the longest suffix with highest similarity.
+It requires at most store $O(p)$ cells for each column but we only process one column at the time, thus, we store only  additional $O(p)$ for that whole cell processing.
+At the end of  $processDiagonal$ we will have $t$ suffixes that requires $O(t)$  space for storing them.
+Then, $processDiagonal$ requires $O(t+tp)=O(t)$ time for processing diagonal with $O(t+p)=O(t)$ additional space. 
+Further, we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ .
+It is simply one way pass through list of suffixes where processing of each window requires at most $O(p)$.
+The total number of such windows at most $O(t)$.
+Thus, $SuffixMaxForEachWindow$ requires $O(t)*O(p)=O(tp)$ time with at $O(t)$ space for storing suffix for each window. 
+
+The filtering process is one way pass throgugh list of suffixes $W_2$.
+It requires at most $O(t)$ time.
+
+As we see, the total running time and space complexity of second phase is $O(tp)$ and $O(t)$ respectively.
+
+\paragraph{Third phase}
+The third phase remains unchanged, thus have the  same time and space bound.
+Note that it possible for perform this phase in-place during second phase which 
+make algorithm faster.
+The third phase is $O(|t| log|t|)$  at most both for space and running time complexity.
+
+Thus, the total runing time is $max(O(tp),O(t \log t))$ and space complexity $t \log t$. \red{It be good if we also improve third phase)))}
+
 
 \begin{theorem}
 Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive}.
