@@ -9,49 +9,34 @@ It is achieved by imitating all phases of the algorithm.
 \subsection{Algorithm description}
 
 The algorithm comprises three phases as in \cite{luciv2019interactive}.
-At phase one (Lines 1-3) semi-local sa problem is solved for the pattern $p$ against whole text $t$.
+At phase one (Lines 1-3) \emph{semi-local sa} problem is solved for the pattern $p$ against the whole text $t$.
 This solution provides access to the string-substring matrix $H^{str-sub}_{p,t}$ which allows performing fast queries of \emph{sa} score for pattern $p$ against every substring of text $t$.
 We apply implicitly transposition and inverse operation on $H^{str-sub}_{p,t}$:
-
 \begin{equation}
 	M[j,i]:= -H^{str-sub}_{p,t}[i,j]
 \end{equation}
-Note that, inverse operataion preserves (\emph{anti}) \emph{Monge} property whereas inverse operation make \emph{anti Monge} matrix \emph{Monge} and vice versa. 
+Note that, transposition operation preserves (\emph{anti}) \emph{Monge} property whereas inverse operation make \emph{anti Monge} matrix \emph{Monge} and vice versa. 
 So, matrix $M$ is \emph{Monge} matrix.
 
-The second phase consist of several steps (Lines 4-6).
-First, we want to obtain for each prefix of the text $t$ a longest suffix that have a highest similarity with given pattern $p$ with following constarint.
-The lengths of obtained suffixies should be in $|p|*k..\frac{|p|}{k}$ interval where $k \in [\frac{1}{\sqrt{3}},1]$.
-It could be done in several way.
+The second phase comprises several steps (Lines 4-6).
+First, we want to get for each prefix of the text $t$ the longest suffix that has the highest similarity with the given pattern $p$ with the following constraint.
+The lengths of obtained suffixes should be in $|p|*k..\frac{|p|}{k}$ interval where $k \in [\frac{1}{\sqrt{3}},1]$.
+It could be done in several ways.
 For example, direct pass through diagonal with width $w:= \frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ in $H^{str-sub}_{p,t}$ (see fig) or in $M$ (see fig).
-The other approach is following.
-Note that in  $M$ is \emph{Monge matrix} and  indices is swapped.
-It allows us to descry this diagonal as approximately $|t|$ square windows of size $wxw$ i.e a sliding window of step 1 that goes diagonally.
-Due to lenght constraint we only interesting in elements that lies in main diagonal and below it.
-Each of this $W:=wxw$ matrix is \emph{Monge matrix} by definition.
+The other approach is the following.
+Note that in  $M$ is \emph{Monge matrix} and indices are swapped.
+It allows us to descry this diagonal as approximately $|t|$ square windows of size $w \times w$ i.e a sliding window of step 1 that goes diagonally.
+Because of length constraint we only interesting in elements that lie in the main diagonal and below it (remember, transposition) in these submatrices $w\times w$.
+Each of these $W:=wxw$ matrix is \emph{Monge matrix} by definition (as a submatrix of \emph{Monge matrix}).
 This implies that $W$ also totally monotone.
-If we set to $+\inf$ that lies above diagonal that matrix will remain totally monotone.
-Thus, we can apply \emph{SMAWK} algorithm to this matrix to find leftmost element that has minimum in a given row with corresponding column position.
+If we set to $+\inf$ for elements that lie above the main diagonal that result matrix will remain totally monotone.
+Thus, we can apply \emph{SMAWK} algorithm to this matrix to find a leftmost element that has a minimum in a given row with a corresponding column position.
 For our case leftmost means that for each prefix algorithm will detect longest suffix (remember that $M$ is transposed $H^{str-sub}_{p,t}$ ).
 
-Second step, it is simply one way pass through these suffixes with sliding window  of size $\frac{|p|}{t}$ to find for each window most similar suffix with the longest length. Then resulting set is filtered out that remaining suffixes have score greater or equal to given theshold $-k_{di}$. 
+The second step, it is one-way pass through these suffixes with a sliding window of size $\frac{|p|}{t}$ to find for each window most similar suffix with the longest length. Then the resulting set is filtered out that remaining suffixes have a score greater or equal to given threshold $-k_{di}$. 
 
-The third phase is same as in \cite{luciv2019interactive} (Lines 8-12).  
+The third phase is the same as in \cite{luciv2019interactive} (Lines 8-12).  
 
-
-
-%At the second phase text $t$ is scanning with a sliding window of length $L_{w}$ with step 1.
-%First, it checks that given substring $w$ that of a maximum possible size of $L_{w}$ have score that is higher or equal to a given threshold (Line 4).
-%If no, then this interval will not further be proceeded (Line 5) else this interval will be processed as follows.
-%First, for each prefix of text $t$ it finds suffix that has the highest alignment score with the maximal length among all suffixes with that score. 
-%It corresponds to the searching row position for each column in string-substring matrix with associated alignment score. 
-%Second, among these suffixes, one is selected with the highest score.
-%If several suffixes have the same score the one with maximal length is selected (Line 8).
-%Then if selected suffix has score higher than the threshold, then it is added to set $W_2$.
-
-%The third phase is the same as in \cite{luciv2019interactive}. 
-%More precisely, on the third phrase, set $W_{2}$ is filtered out in a such way that only non-intersected intervals are left.
-%It is simply the sorting of set $W_{3}$ by starts of intervals with following one way passage with filtering.  
 
 
 \begin{algorithm}[H]
@@ -94,7 +79,7 @@ Pseudocode:
 
 \begin{theorem}
 Algorithm \ref{alg:patternMathing1} could  be solved in
- $max(O(tp),O(t \log t))$  time with $O(t \log t)$ additional space where $p$ is pattern, $t$ is text when $|p| \leq |t|$, $v=O(1)$ where $v$ is denominator of normalized mismatch score for \emph{semi-local sa}
+ $max(O(|t|*|p|),O(|t| * \log |t|))$  time with $O( |t| \log |t|)$ additional space where $p$ is pattern, $t$ is text when $|p| \leq |t|$, $v=O(1)$ where $v$ is denominator of normalized mismatch score for \emph{semi-local sa}
 $w_{normalized} = (1,\frac{\mu}{v},0)$.
 \end{theorem}
 
@@ -102,45 +87,52 @@ For each phases of algorithm we provide it's time and space bounds.
 
 \paragraph{First phase}.
 
-For storing \emph{semi-local lcs} solution, specifically decomposed kernel $P$ we will use simply two list (two permuations) of size at most $v*|t|$ each because kernel $P$ has at most $v|t|$ non zeros (after we use $blow-up$ tecnique).
-Due to fact that $v = O(1)$    $O(v*|t|)$ becomes $O(|t|)$.
-Note that for such simple data structure to make random access to $P$ we need to calculate amount of poinst that dominated by given point. It require to check at most   $O(|t|)$ points. 
+For storing \emph{semi-local sa} solution, specifically decomposed kernel $P$ we will use two list (two permutations) of size at most $v*|t|$ each because kernel $P$ has at most $v*|t|$ non zeros (after we use $blow-up$ technique for transition  to \emph{semi-local lcs}).
+Due to the fact that $v = O(1)$, $O(v*|t|)$ becomes $O(|t|)$.
+Note that for such simple data structure we need to calculate the number of points that dominated by given point to make random access to $P$. It requires checking at most   $O(|t|)$ points. 
 Thus, random access query is $O(|t|)$.
 
-The solution of $semi-local sa$ when $v=O(1)$ is just $O(|t|*p)$.
+The solution of \emph{semi-local sa} when $v=O(1)$ is just $O(|t|*p)$.
 
-The total bounds for time and space complexity for this phase is at most $O(|t|*p)$ and $O(|t|)$ correspondingly.
+The total bounds for time and space complexity for this phase are at most $O(|t|*|p|)$ and $O(|t|)$ correspondingly.
 
 \paragraph{Second phase}
 We omit $k$ factor in analysis because when k $\in [\frac{1}{\sqrt{3}},1]$ $O(k) = 1$
 
-We will use first approach described in algorithm description for this phase.
-First, although the random access query to matrix element require $O(t)$.
+We will use the first approach described in the algorithm description for this phase.
+First, although the random access query to a matrix element requires $O(t)$.
 We only need one such query to step on the diagonal.
 Further we use \red{Theorem about adjacent cell query} that allows us to perform $O(1)$ access to adjacent elements for given $i,j$ cell in matrix $M$.
-Thus, the visit of each cell in diagonal of size at most $O(t) \times O(p) $ require at most $1$ random access and $O(t*p -1) =O(t*p)$ adjacent accesses.
-When we pass through slice of specific column we also will find the longest suffix with highest similarity.
-It requires at most store $O(p)$ cells for each column but we only process one column at the time, thus, we store only  additional $O(p)$ for that whole cell processing.
-Also we store $O(t)$ cells that corresponds to suffixes of length $\frac{p}{k}$  
-At the end of  $processDiagonal$ we will have $t$ suffixes that requires $O(t)$  space for storing them.
-Then, $processDiagonal$ requires $O(t+tp)=O(t)$ time for processing diagonal with $O(t+p)=O(t)$ additional space. 
-Further, we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ with additional condition that within each window the suffix with length $\frac{p}{k}$ have similarity score at least $-k_{di}$.
-It is simply one way pass through list of suffixes where processing of each window requires at most $O(p+1)=O(1)$.
-The total number of such windows at most $O(t)$.
-Thus, $SuffixMaxForEachWindow$ requires $O(t)*O(p)=O(tp)$ time with at $O(t)$ space for storing suffix for each window. 
+Thus, the visit of each cell in diagonal of size at most $O(t) \times O(p) $ requires at most $1$ random access and $O(|t|*|p| -1) =O(|t|*|p|)$ adjacent accesses.
+When we pass through a slice of the specific column, we also will find the longest suffix with the highest similarity.
+It requires storing at most $O(p)$ cells for each column but we only process one column at the time, thus, we will require only $O(p)$ additional space for that whole cell processing.
+Additionally, we will store $O(|t|)$ cells that correspond to suffixes of length $\frac{p}{k}$.
+Let's denote it by $C$. 
+We query them during diagonal passage because they lie also on this diagonal.
+  
+At the end of  $processDiagonal$ we will have $t$ suffixes that require $O(t)$  space for storing them.
+Then, $processDiagonal$ requires $O(|t|+|t|*|p|)=O(|t|*|p|)$ time for processing diagonal with $O(|t|+|p|)=O(|t|)$ additional space. 
+Further (Line 5), we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ with additional condition that within each window of size $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ the suffix with length $\frac{p}{k}$ have similarity score at least $-k_{di}$.
+It is simply a one-way pass-through list of suffixes where the processing of each window requires at most $O(|p|+1)=O(|p|)$.
+More precisely, first, we check that for current window of size $O(|p|)$
+associated suffix has similarity not less then given threshold $k_{di}$.
+It is simply lookup for a specific element in $C$ with $O(1)$.
+If that true, then we need $O(p)$ lookups within $suffixes$ to query the most similar longest one.    
+The total number of such windows at most $O(|t|)$.
+Thus, $SuffixMaxForEachWindow$ requires $O(|t|)*O(|p|)=O(|t|*|p|)$ time with $O(|t|)$ space for storing suffix for each window. 
 
-The filtering process is one way pass throgugh list of suffixes $W_2$.
+The filtering process (Line 6) is a one-way pass through a list of suffixes $W_2$.
 It requires at most $O(t)$ time.
 
-As we see, the total running time and space complexity of second phase is $O(tp)$ and $O(t)$ respectively.
+As we see, the total running time and space complexity of the second phase is $O(|t|*|p|)$ and $O(|t|)$ respectively.
 
 \paragraph{Third phase}
-The third phase remains unchanged, thus have the  same time and space bound.
-Note that it possible for perform this phase in-place during second phase which 
-make algorithm faster.
+The third phase remains unchanged, thus have the same time and space-bound.
+Note that it possible to perform this phase in-place during a second phase which 
+make the algorithm even faster i.e decrease space and time complexity to $O(|t|)$  and $O(|t|*|p|)$.
 The third phase is $O(|t| log|t|)$  at most both for space and running time complexity.
 
-Thus, the total runing time is $max(O(tp),O(t \log t))$ and space complexity $t \log t$. \red{It be good if we also improve third phase)))}
+Thus, the total running time is $max(O(tp),O(t \log t))$ and space complexity $t \log t$. \red{It be good if we also improve third phase)))}
 
 
 \begin{theorem}
