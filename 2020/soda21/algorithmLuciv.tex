@@ -121,10 +121,11 @@ Further we use \red{Theorem about adjacent cell query} that allows us to perform
 Thus, the visit of each cell in diagonal of size at most $O(t) \times O(p) $ require at most $1$ random access and $O(t*p -1) =O(t*p)$ adjacent accesses.
 When we pass through slice of specific column we also will find the longest suffix with highest similarity.
 It requires at most store $O(p)$ cells for each column but we only process one column at the time, thus, we store only  additional $O(p)$ for that whole cell processing.
+Also we store $O(t)$ cells that corresponds to suffixes of length $\frac{p}{k}$  
 At the end of  $processDiagonal$ we will have $t$ suffixes that requires $O(t)$  space for storing them.
 Then, $processDiagonal$ requires $O(t+tp)=O(t)$ time for processing diagonal with $O(t+p)=O(t)$ additional space. 
-Further, we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ .
-It is simply one way pass through list of suffixes where processing of each window requires at most $O(p)$.
+Further, we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ with additional condition that within each window the suffix with length $\frac{p}{k}$ have similarity score at least $-k_{di}$.
+It is simply one way pass through list of suffixes where processing of each window requires at most $O(p+1)=O(1)$.
 The total number of such windows at most $O(t)$.
 Thus, $SuffixMaxForEachWindow$ requires $O(t)*O(p)=O(tp)$ time with at $O(t)$ space for storing suffix for each window. 
 
@@ -145,8 +146,25 @@ Thus, the total runing time is $max(O(tp),O(t \log t))$ and space complexity $t 
 \begin{theorem}
 Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive}.
 
-\red{Proof it}
-\begin{displaymath}
-    D = \diag(d_1,\dots,d_n)
-  \end{displaymath}
 \end{theorem}
+
+Let be $A_1$ a set $W_{2}$ from algorithm \ref{luciv}.
+Let be $A_2$ a set $W_{2}$ from algorithm \ref{alg:patternMathing1}.
+We will show that $A_2 = A_1$.
+
+At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragmetns which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
+Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size in  $pk...\frac{p}{k}$ interval.
+
+The second algorithm \ref{alg:patternMathing1} proceed in similar way but it first detects longest suffixes with size in $pk...\frac{p}{k}$ interval for each prefix of text $t$.
+Then filtering is perfomed in that way that only for those windows of size $\frac{p}{k}$ the longest suffix is left.
+
+Thus $A_1=A_2$  
+
+
+
+  
+
+Note that set $A_{1}$ contains only those fragments of size $\frac{p}{k}$ from text $t$ that close enough to pattern $p$ i.e 
+
+The fragment from $W_{1}$ then shrunked.
+It means that after second phase set $W_{2}$ will have size  of $W_{1}$. 
