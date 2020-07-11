@@ -155,17 +155,30 @@ Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorith
 
 \end{theorem}
 
+First we show, equivalence between similarity functions, then we
+show that set $W_{2}$ from algorithm \ref{luciv} equals to set $W_{2}$ from algorithm \ref{alg:patternMathing1}.  
 Let be $A_1$ a set $W_{2}$ from algorithm \ref{luciv}.
 Let be $A_2$ a set $W_{2}$ from algorithm \ref{alg:patternMathing1}.
 We will show that $A_2 = A_1$.
 
-At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragmetns which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
-Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size in  $pk...\frac{p}{k}$ interval.
+\paragraph{First part}
+\red{Take from dimpla}
+
+
+\paragraph{Second part}
+
+At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragments which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
+Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size within  $pk...\frac{p}{k}$ interval.
+That how $A_1$ constucted.
 
 The second algorithm \ref{alg:patternMathing1} proceed in similar way but it first detects longest suffixes with size in $pk...\frac{p}{k}$ interval for each prefix of text $t$.
-Then filtering is perfomed in that way that only for those windows of size $\frac{p}{k}$ the longest suffix is left.
+Then it proceeds in a such way that for each window the longest suffix it detected that have similarity above given threshold $h$ for current window of size $\frac{p}{k}$ .
+%$Then filtering is perfomed in that way that only$
+That how $A_1$ constucted.
+%those lonh suffices  left 
+ %for those windows of size $\frac{p}{k}$ the longest suffix is left.
 
-Thus $A_1=A_2$  
+Thus, $A_1=A_2$  by resulting equivalence of construction. 
 
 
 
