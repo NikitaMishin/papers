@@ -1,13 +1,65 @@
 \section{Evaluation}
 \label{section:evaluation}
 
-\subsection*{Semi-local algorithms}
-Show perfomance between lcs and semi-local lcs??? and poor perfomance of recursive algorithm based on steady ant?
+\paragraph{Research questions}
+To present evaluation of algorithms we need to investigate the perfomance of algorithms that computes solution for \emph{semi-local} problem first.
+It is justified by fact that all described algorithms heavily based on it.
+Thus, the following research questions have been settled by evaluation in this paper:
+\begin{enumerate}
+\item RQ1. Does both theoretical algorithms for solving \emph{semi-local} problem applicable in practice? (perform well on practice)
+\item RQ2. How differ in terms of running time computation of \emph{semi-local lcs} and \emph{prefix lcs}?
+\end{enumerate}
 
-\subsection*{Approximate matching algorithms}
-Show outperforming for different cases between luciv and our algorithm.
+We had implemented algorithms and required data structures to answer RQ1 and RQ2 \footnote{add link to github}. Evaluation have been done in laptop machine with operation system \emph{Ubuntu18.04}  that have processor \emph{Intel-Core i5} with  \emph{16GB} RAM.
 
-Show quality betwee our new algo and  luciv algo (our should be better)
+\paragraph{RQ1}
 
-Show that sparse table bad when large?
+On  fig. \ref{kb} the comparison between two algorithm for computing \emph{semi-local} lcs is presented.
+The plot marked as $recursive$ refers to the algorithm based on steady ant multiplication of associated sticky braids.
+The second one $reducing$ refers to algorithm that based on reducing the  associated unreduced sticky braid to reducing one.
+
+Although both algorithms have the same theoretical running time, 
+the figure completely shows that there are significant differences in practice.
+The complex recursive structure of the algorithm by fast multiplication of sticky braids makes it inapplicable in practice for long input.
+Nonetheless, such complex stucture with combination of steady ant multiplication  indeed allows to get rid of one $v$ when computing \emph{semi-local sa} (see fix \ref{•}).
+The recursive structure of multiplication itself is also a subject of required optimizations due to fact that it used in several theoretical algorithms.
+For example, in solution for \emph{Window substring} problem or \emph{Bounded Length Smith-Waterman alignment} (implicilty).  
+
+\paragraph{RQ2}
+
+On fig \ref{kb} the comparision between computing \emph{prefix lcs} and \emph{semi-local lcs} is presented.
+More preciesely, the comparison among computing prefix lcs via dynamic programing with explicit (denoted by \emph{prefix-lcs}) and implicit (denoted by \emph{light-prefix})  construction of 2D matrix and \emph{semi-local lcs} via reducing approach is presented.
+The fig \ref{t} show that computation of \emph{semi-local lcs} not only applicable to large input but also comparable with computing of simple \emph{prefix lcs}.
+The difference between speed computation is relatively subtle. 
+ 
+
+
+%The following research questions have not been settled in this paper
+%and need further study:
+%\begin{enumerate}
+%\item
+%\end{enumerate} 
+
+%We
+
+%\subsection*{Semi-local algorithms}
+%In this section we describe
+%Show perfomance between lcs and semi-local lcs??? and poor perfomance of %recursive algorithm based on steady ant?
+
+%\paragraph{Test Setup}
+%For the 
+
+
+%\subsection{Тестовый стенд}
+%Для проведения экспериментов использовалась
+%машина с процессором \emph{Intel-Core i5} и оперативной памятью размером %\emph{16GB}.
+%Операционная система \emph{Ubuntu 18.04 Bionic}.
+%На каждый запуск \emph{jar}-файла выделялось $10GB$ памяти.
+
+%\subsection*{Approximate matching algorithms}
+%Show outperforming for different cases between luciv and our algorithm.
+
+%Show quality betwee our new algo and  luciv algo (our should be better)
+
+%Show that sparse table bad when large?
  
