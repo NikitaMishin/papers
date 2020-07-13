@@ -49,11 +49,16 @@ The scoring scheme calculates as follows:
 \end{equation}
 The $k^{+}$ states for the number of matching symbols, $k^{-}$ --- mismatched symbols. 
 
+Note that  \emph{LCS} is a special case of \emph{SA} when scoring scheme is $(1,0,0)$.
 
+Both described problems are solved by  classical dynamic programming algorithm and have running time complexity $O(|a||b|)$.
+$LCS$ and $SA$ allow you to find how much whole given strings are similar i/e how similar two string in a global sense.
 
-
-
+In many cases, this is not enogh.
+There also exist fully local version of these problems and semi-local one.
+The last one is in sight of this paper due to natural applicability to approximate pattern matching. 
 \subsection{Semi-local lcs}
+
 Describe semi-local lcs (definition), algorithms that solves (steady and and braid reducing)
 
 \subsection{Monge matrix}
