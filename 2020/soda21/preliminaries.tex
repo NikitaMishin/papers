@@ -87,8 +87,47 @@ H_{a,b}^{str-sub} & H_{a,b}^{pre-suf}
 \end{equation}
 
 In \cite{tiskin} is proved that ${H_a,b}$ is unit anti Monge.
+\begin{definition}
+Matrix $H$ called (anti) Monge matrix if
 
-def monge matrix,anti monge,dominance sum,canonical decomposition, incremental queries.
+\begin{displaymath}
+H[i,j]+H[i^{'},j^{'}] (\geq)\leq H[i,j^{'}]+H[i^{'},j], \forall i<=i^{'}, j \leq j^{'}
+\end{displaymath}
+\end{definition}
+
+\begin{definition}
+Let $H[0:m,0:n]$  be a matrix.
+$H^{\square}[0:m-1,0:n-1]$ constructed as a result of taken cross difference between secondary and first diagonal for all adjacent 2 by 2 squares called \emph{cross-difference} matrix of  $H$
+\end{definition}
+
+
+\begin{definition}
+Matrix $H$ called unit anti Monge matrix if $H$ is (anti) Monge matrix and its \emph{cross-difference matrix} $(-)H^{\square}$ is permutation matrix.
+\end{definition}
+The example of unit anti Monge matrix is following:
+\begin{equation}
+\begin{bmatrix}
+0 & 2 & 3 \\
+0 & 1 & 2 \\
+0 & 1 & 1
+\end{bmatrix} ^ { \square} =
+\begin{bmatrix}
+(2 + 0) - (1 + 0)  & (3 + 1) - (2 + 2)  \\
+(1 + 0) - (1 + 0) &  (2 + 1) - (1 + 1) 
+\end{bmatrix} = 
+\begin{bmatrix}
+1 & 0  \\
+0 & 1 
+\end{bmatrix} 
+\end{equation}
+ 
+
+
+\begin{definition}
+Let $H[0:m-1,0:n-1]$  be a matrix.
+$H^{\nearrow}[0:m-1,0:n-1]$ constructed as dominance sum matrix difference between secondary and first diagonal for all adjacent 2 by 2 squares called \emph{cross-difference} matrix of  $H$
+\end{definition}
+
 
 
 We particulary interesting in lower left quadrant that refers to string substring problem:
@@ -97,9 +136,9 @@ H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]),i,j \in [0,|b|]
 \end{equation}
 
 \subsection{Semi-local sa}
-The semi-local sequence alignment (sa) is a generalazation of semi-loca lcs in same sense as seqeucne alignemnt is generelaztion of lcs.
+The semi-local sequence alignment (sa) is a generalazation of semi-local lcs in same sense as sequence alignemnt is generelaztion of lcs.
 
-Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the semi-local sa is asks about
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the semi-local sa  asks about
 sa scores for following:
 \begin{enumerate}
 \item \emph{string-substring}: whole $a$ against every substring of $b$
@@ -108,7 +147,9 @@ sa scores for following:
 \item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$
 \end{enumerate} 
 
-The associated matrix for semi-local sa defined analogously as for semi-local lcs.
+The associated matrix for \emph{semi-local sa} is defined analogously as for \emph{semi-local lcs}.
+
+
 
 blown-up tecnhique.
 
