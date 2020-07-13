@@ -14,23 +14,44 @@ The latter one have optimal running time complexity of $O(|p|+|t|)$ for \emph{Co
 The search of \emph{pattern with wildcard symbols} or search set of patterns in text $t$\cite{}, multidimensional \emph{AMatch}\cite{} , search with lenght constraint of detected duplicates \cite{} are examples of such extension.
 There exits many more examples of constrainsts, extensions and special cases of \emph{AMatch} problem\cite{}.
 
-
 The one of the common approach to solve approximate pattern matching is the usage of solution of  string  similarity problem.
 Latter represent a set of fundamental problems such as \emph{edit distance}, \emph{longest common subsequence}, \emph{sequence alignment}.
-In this paper we primarily focuses on the last two. 
+In this paper we primarily focuses on the usage of latter two when developing algorithms.
+
+Recently there have been developed algorithm for solving interesting  extension of \emph{AMatch} problem with length constarint\cite{•}.
+Although their algorithm have poor result in terms of running time complexity, the proposed solution possesses  a completnessess proprety i.e it founds \emph{all} non-intersected clones of pattern $p$ with specified similarity threshold  and length constraint on matching substrings.
+Thus, this algorithm is an subject of interest in this paper.
+The complete description of algorithm and its improved version may be found in section \ref{•} respectively.
 
 
-% as function $g$.
-%%The one of the common approach is usage  
-%to solve  is using \emph{sequence alignment} that measure similaruty
+\subsection{Semi-local lcs}
+First of all we give definition of \emph{lcs} and \emph{sa}.
+
+\begin{definition}
+Given two strings $a$ and $b$  the longest common subsequence (\emph{LCS}) problem ask for the maximal length of the longest common subsequence of $a$ and $b$ (\emph{lcs(a,b)}).
+\end{definition} 
+In other words, \emph{LCS} problem asks about maximal lcs score of two given string a and b ($lcs(a,b)$).
+
+\begin{definition}
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the sequence alignment (\emph{SA}) problem ask for the maximal alignment score between $a$ and $b$ ($sa(a,b)$).
+\end{definition}
+
+Scoring scheme determines how calulate alignment score of two aligned sequences.
+If pair of character in aligned sequences are matches (equals) then this pair  contributes to final alignemnt score $w_{+}$, if their mismatch it contributes $w_{0}$.
+If symbol $\alpha$ of one of the sequences is not aligned with  any other symbol from other sequence it means that $\alpha$ is aligned with $gap$.
+Thus, this pair contributes $w_{0}$.    
+The scoring scheme calculates as follows:
+\begin{equation}\label{formula:sa}
+\begin{aligned}
+    sa(a,b,w) = w_{+}k^{+} + w_{0}k^{0} + w_{-} (|a| + |b| - 2k^{+} - 2k^{0}) =\\
+    k^{+} (w_{+} - 2w_{-} ) + k^{0}  (w_{0} - 2w_{-}) + w_{-}(|a| + |b|)
+\end{aligned}
+\end{equation}
+The $k^{+}$ states for the number of matching symbols, $k^{-}$ --- mismatched symbols. 
 
 
 
 
-
-
-
-Describe approximate matching formally
 
 \subsection{Semi-local lcs}
 Describe semi-local lcs (definition), algorithms that solves (steady and and braid reducing)
