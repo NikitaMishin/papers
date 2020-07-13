@@ -5,23 +5,26 @@
 The approximate pattern matching problem ($AMatch$) defined as follows.
 Given text $t$, pattern $p$ and some threshold $h$ the \emph{approximate pattern matching} problem ask for all substrings from text $t$ that have similarity score  with given pattern $p$ at least $h$ according to some similarity function $g$.  
 
-There exist different kinds of extension and particular cases of this problem.
+There exist different kinds of extensions and particular cases of this problem.
 For example, \emph{complete approximate pattern matching} (\emph{CompleteMatch}) that ask for
 substrings of text $t$ that are exact clones of pattern $p$.
 The approach for this special case of \emph{AMatch} is usage of well-know  algorithms such as  Aho-Korasic, BouerMurr, Knuth-Morris-Pratt, and so on.
-The latter one have optimal running time complexity of $O(|p|+|t|)$ for \emph{CompleteMatch} problem.
-\emph{Approximate pattern matching with k mismatches} is an another example of special case.
+The latter one have optimal running time complexity of $O(|p|+|t|)$ for \emph{CompleteMatch} problem\cite{}.
+\emph{Approximate pattern matching with k mismatches} is an another example of special case \cite{}.
+The search of \emph{pattern with wildcard symbols} or search set of patterns in text $t$\cite{}, multidimensional \emph{AMatch}\cite{} , search with lenght constraint of detected duplicates \cite{} are examples of such extension.
+There exits many more examples of constrainsts, extensions and special cases of \emph{AMatch} problem\cite{}.
 
 
-
- 
-The search of \emph{pattern with wildcard symbols} of set of patterns in text $t$, are examples of such extension.
-
-
+The one of the common approach to solve approximate pattern matching is the usage of solution of  string  similarity problem.
+Latter represent a set of fundamental problems such as \emph{edit distance}, \emph{longest common subsequence}, \emph{sequence alignment}.
+In this paper we primarily focuses on the last two. 
 
 
+% as function $g$.
+%%The one of the common approach is usage  
+%to solve  is using \emph{sequence alignment} that measure similaruty
 
-There exist differenct approach for solving \emph{AMatch}
+
 
 
 
