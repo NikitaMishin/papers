@@ -59,7 +59,68 @@ There also exist fully local version of these problems and semi-local one.
 The last one is in sight of this paper due to natural applicability to approximate pattern matching. 
 \subsection{Semi-local lcs}
 
-Describe semi-local lcs (definition), algorithms that solves (steady and and braid reducing)
+Given two strings $a$ and $b$ the semi-local lcs is asks about
+lcs scores for following:
+\begin{enumerate}
+\item \emph{string-substring}: whole $a$ against every substring of $b$
+\item \emph{substring-string}: whole $b$ against every substring of $a$
+\item \emph{prefix-suffix}: every prefix of $a$ against every suffix of $b$
+\item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$
+\end{enumerate} 
+
+
+The following \emph{semi-local lcs matrix} associated with the defined \emph{semi-local lcs}.
+\begin{definition}
+The \emph{semi-local lcs matrix}  $H_{a,b}$ for strings a,b defined as follows:
+\begin{equation}
+	H_{a,b}[i,j] = if (j\leq i) j-i  else lcs(a,b^{pad}[i,j]) 
+\end{equation} 
+where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $.
+
+The semi-local lcs matrix $H_{a,b}$ comprises from four
+quadrant associated with described  subproblems:
+\begin{equation}
+ H_{a,b} = \begin{bmatrix}
+H_{a,b}^{suf-pre} & H_{a,b}^{sub-str} \\
+H_{a,b}^{str-sub} & H_{a,b}^{pre-suf} 
+\end{bmatrix}    
+\end{equation}
+
+In \cite{tiskin} is proved that ${H_a,b}$ is unit anti Monge.
+
+def monge matrix,anti monge,dominance sum,canonical decomposition, incremental queries.
+
+
+We particulary interesting in lower left quadrant that refers to string substring problem:
+\begin{equation}
+H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]),i,j \in [0,|b|] 
+\end{equation}
+
+\subsection{Semi-local sa}
+The semi-local sequence alignment (sa) is a generalazation of semi-loca lcs in same sense as seqeucne alignemnt is generelaztion of lcs.
+
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the semi-local sa is asks about
+sa scores for following:
+\begin{enumerate}
+\item \emph{string-substring}: whole $a$ against every substring of $b$
+\item \emph{substring-string}: whole $b$ against every substring of $a$
+\item \emph{prefix-suffix}: every prefix of $a$ against every suffix of $b$
+\item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$
+\end{enumerate} 
+
+The associated matrix for semi-local sa defined analogously as for semi-local lcs.
+
+blown-up tecnhique.
+
+theorems of running time complexity.
+
+ 
+
+
+
+
+
+\end{definition}
 
 \subsection{Monge matrix}
 Describe monge property  
