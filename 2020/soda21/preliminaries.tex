@@ -76,7 +76,7 @@ The \emph{semi-local lcs matrix}  $H_{a,b}$ for strings a,b defined as follows:
 	H_{a,b}[i,j] = if (j\leq i) j-i  else lcs(a,b^{pad}[i,j]) 
 \end{equation} 
 where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $.
-
+\end{definition}
 The semi-local lcs matrix $H_{a,b}$ comprises from four
 quadrant associated with described  subproblems:
 \begin{equation}
@@ -86,7 +86,6 @@ H_{a,b}^{str-sub} & H_{a,b}^{pre-suf}
 \end{bmatrix}    
 \end{equation}
 
-In \cite{tiskin} is proved that ${H_a,b}$ is unit anti Monge.
 \begin{definition}
 Matrix $H$ called (anti) Monge matrix if
 
@@ -146,12 +145,23 @@ The example dominance sum matrix:
 \end{bmatrix}
 \end{equation}
 
+In \cite{tiskin} is proved that $H_{a,b}$ is unit anti Monge.
+Also it is proved that  this matrix may be decomposed to permuation matrix.
+It allows to store $H_{a,b}$ implicitly and query any element of $H_{a,b}$ via dominance sum query (orthogonal range queries).
+
+\begin{proposition}
+Given a permutation matrix $P$ and the value
+$P^{\nearrow}[i; j]$, the values $P^{\nearrow}[i +- 1; j], P^{\nearrow}[i; j +- 1]$, where they exist, can
+be queried in time $O(1)$\cite{}.
+\end{proposition}
 
 
 We particulary interesting in lower left quadrant that refers to string substring problem:
 \begin{equation}
 H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]),i,j \in [0,|b|] 
 \end{equation}
+
+
 
 \subsection{Semi-local sa}
 The semi-local sequence alignment (sa) is a generalazation of semi-local lcs in same sense as sequence alignemnt is generelaztion of lcs.
@@ -174,13 +184,6 @@ blown-up tecnhique.
 theorems of running time complexity.
 
  
-
-
-
-
-
-\end{definition}
-
 \subsection{Monge matrix}
 Describe monge property  
 
