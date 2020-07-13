@@ -125,8 +125,26 @@ The example of unit anti Monge matrix is following:
 
 \begin{definition}
 Let $H[0:m-1,0:n-1]$  be a matrix.
-$H^{\nearrow}[0:m-1,0:n-1]$ constructed as dominance sum matrix difference between secondary and first diagonal for all adjacent 2 by 2 squares called \emph{cross-difference} matrix of  $H$
+$H^{\nearrow}[0:m,0:n]$ constructed as sum of element that lies below and left given cell $i,j$ in matrix $H$ called \emph{dominance-sum} matrix of $H$
 \end{definition}
+
+The example dominance sum matrix:
+\begin{equation}
+\begin{bmatrix}
+1 & 0  \\
+0 & 1 
+\end{bmatrix}^{\nearrow} =
+\begin{bmatrix}
+0+0+0 & 1 & 1+1 \\
+0+0 & 0 & 1 \\
+0 & 0 & 0
+\end{bmatrix} =
+\begin{bmatrix}
+0 & 1 & 2 \\
+0 & 0 & 1 \\
+0 & 0 & 0
+\end{bmatrix}
+\end{equation}
 
 
 
