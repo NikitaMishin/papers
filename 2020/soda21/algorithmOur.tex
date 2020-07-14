@@ -1,41 +1,39 @@
 \section{CutMax a new approximate mathing algorithm}
 \label{section:our}
-We now describe several algorithms that heavily based on semi-local lcs and it's underlying algebraic structure.
+We now describe several algorithms that heavily based on \emph{semi-local sa} and it's underlying algebraic structure.
 
 The first algorithm \ref{alg:appximateMatchingGreedy} refers to following constraint.
-There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ i.e algorithm should perform greedy choice at each step. 
-%$l \geq |tau_{i}| \geq r$  i.e algorithm should perform greedy choice at each step with length constraint.
-This is a more intuitive approach i.e like looking for the most similar one every time. 
+There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $\alpha \geq |tau_{i}| \geq \beta$  i.e algorithm should perform greedy choice at each step with length constraint on $\tau_{i}$.
+This is a more intuitive approach i.e like looking for the most similar substring every time with length at least $l$ and at most $r$. 
 \red{Formally}:
 \begin{equation}
-   \tau_{i} =  \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, t_{l,r}  \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
+   \tau_{i} =  \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, \alpha \leq |t_{l,r}| \leq \beta ,t_{l,r} \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
 \end{equation}
 
 The algorithm proceeds as follows.
-First, upon string-substring Monge matrix $M$ of semi-local solution is built data structure for performing range queries on it denoted by $rmq2D$ (Lines 1).
+First, the \emph{semi-local sa} problem is solved for given pattern $p$ and text $t$ (Line 1).
+Then, solution for string-substring subproblem is queried from it (Line 2).
+Further the diagonal slice of width $r-l$ that corresponds to
+scores of substrings of size in $[l:r]$ is croped in order to get staircase anti Monge Matrix (Line 3).
+Upon starircase matrix $-M_{staircase}$ is built full monge Matrix $M$. 
+Then, \emph{rmq} data structure is built  for perfoming range minimum queries on $M$.
 
 Second, algorthm make recursive call to subroutine $greedy$.
-The $greedy$ routine perfoms greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$.
+The $greedy$ routine perfoms greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$ with legnth boundaries for $\tau_{i}$ in $[l:r]$.
 More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within  $t_{i,j}$ (starting at $i$th position and ending at $j$th position of text $t$.
 It is solved via range queries.
 When detected $interval$ has alignment score less then threshold it means that no clones of pattern $p$ are presented in this part of text $t_{i,j}$, and further processing should be skipped.
 Otherwise, the founded clone is added to final result and the current part of the text splits on two smaller parts and processed in the same way.
 Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern p in text t.
 
-%Lines 7-21 basically  iterative version of recursion where at each level of recursion amount of quesries is doubles at worst case.
-%The total amount of  nodes at each level is following.
-%At the bottom level of recursion is $t$ nodes, next level is $t/2$, ith level is $t/2_{i}$.
-%Thus, the overall amoount of nodes is $t+\frac{t}{2}+\frac{t}{4}+....1 = t*(1 + \frac{1}{2} + \frac{1}{4}+\frac{1}{2^{i}}) $ = sum.
-%As mentioned above complexity of query is O().
-%This time complexity of Lines 7-21 is O()....
 
 \begin{algorithm}[H]
 \caption{Greedy subroutine}
 \label{alg:rec}
-Input: $rmq2D$--- range maximum query data structure for perfoming range queries on monge matrix $M$, $h$ --- theshold value, $i,j$ --- start and end positions of current text $t_{i,j}$ \\
+Input: $rmq2D$--- range maximum query data structure for perfoming range queries on monge matrix $M$, $h$ --- theshold value, $i,j$ --- start and end positions of current text $t_{i,j}$, $l,r$--- length boundaries for detected intervals \\
 Output: Set of non-intersected intervals from $t_{i,j}$\\
 Pseudocode:\\
-$greedy(rmq2D,h, i, j, t_{i,j} ):$
+$greedy(rmq2D,h, i, j, t_{i,j},l,r ):$
 
 \begin{algorithmic}[1]
 \STATE{$interval = rmq2D.query(i,j,i,j)$}
@@ -43,12 +41,12 @@ $greedy(rmq2D,h, i, j, t_{i,j} ):$
 \IF{ $interval.score < h $}
 \RETURN $result$
 \ENDIF
-\IF{ $interval.i - i \geq 1 $}
-\STATE{$cl = greedy(rmq2D,h,t_{i,interval.i})$}
+\IF{ $interval.i - i \geq l $}
+\STATE{$cl = greedy(rmq2D,h,i,interval.i,t_{i,interval.i},l,r)$}
 \STATE{$result.add(cl)$}
 \ENDIF
-\IF{$j - interval.j \geq 1$}
-\STATE{$cl = greedy(rmq2D,h,t_{j,interval.j})$}
+\IF{$j - interval.j \geq l$}
+\STATE{$cl = greedy(rmq2D,h,j,interval.j,t_{j,interval.j},l,r)$}
 \STATE{$result.add(cl)$}
 \ENDIF
 \RETURN $result$
@@ -60,17 +58,73 @@ $greedy(rmq2D,h, i, j, t_{i,j} ):$
 \caption{GREEDY-PATTERN BASED NEAR DUPLICATE
 SEARCH ALGORITHM}
 \label{alg:appximateMatchingGreedy}
-Input: monge matrix $M$ that correspond to string-substring matrix 
-for pattern $p$ and text $t$, theshold value $h$\\
+Input: pattern $p$ and text $t$, theshold value $h$\\
 Output: Set of non-intersected clones of pattern $p$ in text $t$\\
 Pseudocode:\\
 $GreedyMathing(M,h,t)$
 \begin{algorithmic}[1]
+\STATE{$sa = semilocalsa(a,b)$}
+\STATE{$H = sa.getStringSubstringMatrix()$}
+\STATE{$M_{staircase} = getStaircaseMatrix(H,l,r)$}
+\STATE{$M = builtMongeMatrix(-M_{staircase})$}
 \STATE{$rmq2D = buildRMQStructure(M) $}
-\STATE{$result = greedy(rmq2D,0,|t|,t)$}
+\STATE{$result = greedy(rmq2D,h,0,|t|,t,l,r)$}
 \RETURN $result$
 \end{algorithmic}
 \end{algorithm}
+
+
+\begin{theorem}
+Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in
+$O(max(|t||p||v|,\frac{|t| \log^2 |t|}{\log \log |t|} ))$ time and $O(|t|v \log )$ space.
+$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
+$w_{normalized} = (1,\frac{\mu}{v},0)$.
+\end{theorem}
+
+The \emph{semi-local sa} requires $O(|t||p||v|)$ time \ref{.}.
+We will store solution of \emph{semi-local sa} implicitly via sophisticated data structure from \cite{}.
+We have $O(|t|v+|p|v) = O(|t|v)$ points to preprocess.
+Then the data stucture of size $O(|t||v|)$ can be built in
+$O(v|t|  \sqrt{\log(|t|v))}$ time to anwer orthogonal range queries in $O(\frac{\log (v|t|)}{\log \log (v|t|)})$ time.
+Thus, any element of matrix can be queried in
+$O(\frac{\log (v|t|)}{\log \log (v|t|)})$.   
+
+Lines (2-3) is just an slice of indices and  made inplace.
+Lines (4-5) corresponds to THREOREMABOUTSTAIRVASE and requires 
+where $q$--- time access of matrix element.
+We will use these data structure with the difference that we return indexed of  minimum element along with element itself. 
+Then the data structure of size $O(|t|)$ can be built in time $O(|t|\log |t|) * O(\frac{\log (v|t|)}{\log \log (v|t|)}))=
+O(\frac{|t|\log |t| \log (v|t|)}{\log \log (v|t|)})
+$ to answer
+rmq queries in $O(\log \log |t|)*O(\frac{\log (v|t|)}{\log \log (v|t|)}))=O(\frac{\log \log |t| * \log (v|t|)}{\log \log (v|t|))})$.
+
+
+The first phase of algorithm requires $O(|p| * |t| * v)$ with $O(|t| * v)$ additional space for stroring monge matrix implicitly.
+We denote this matrix, specifically it's lower-left quadrant that refers to
+string-substring solution as $M$ with size $|t| \times |t|$.
+
+
+  Theorema 3.4
+First, note that 
+
+Building structure for rmq queries for staircase matrix requires 
+Theorem 5.8. Given an n $\times$ n partial Monge matrix M, a data structure of size O(n) can be con-
+structed in O(n logn) time to answer submatrix maximum queries in O(log logn) time.
+   
+
+\red{Proof it}
+\begin{displaymath}
+    D = \diag(d_1,\dots,d_n)
+  \end{displaymath}
+
+
+\begin{corollary}
+Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
+$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
+
+\end{corollary}
+
+
 
 
 The second algorithm \ref{alg:appximateMatchingMax} uses a less sophisticated approach and a more lightweight one but found fewer duplicates of pattern $p$(see example \ref{}).
@@ -163,39 +217,6 @@ Thus, this part is dominated by calculating semi-local sa solution.
 
 
 
-
-\begin{theorem}
-Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
-$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
-$w_{normalized} = (1,\frac{\mu}{v},0)$.
-
-On the first phase of alg
-
-The first phase of algorithm requires $O(|p| * |t| * v)$ with $O(|t| * v)$ additional space for stroring monge matrix implicitly.
-We denote this matrix, specifically it's lower-left quadrant that refers to
-string-substring solution as $M$ with size $|t| \times |t|$.
-
-
-  Theorema 3.4
-First, note that 
-
-Building structure for rmq queries for staircase matrix requires 
-Theorem 5.8. Given an n $\times$ n partial Monge matrix M, a data structure of size O(n) can be con-
-structed in O(n logn) time to answer submatrix maximum queries in O(log logn) time.
-   
-
-\red{Proof it}
-\begin{displaymath}
-    D = \diag(d_1,\dots,d_n)
-  \end{displaymath}
-\end{theorem}
-
-
-\begin{corollary}
-Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
-$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
-
-\end{corollary}
 
 
 
