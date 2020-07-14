@@ -229,27 +229,24 @@ The latter one, costs in  increased construction time and query time by factor $
 %\emph{rmq}  
 
 \subsection{Near-duplicate detection algorithm}
-First, we denote several parameters, that is used in algorithm \cite{}.
-$k$--- constant in interval $[\frac{1}{\sqrt{3}},1]$ that set similarity measure.  
-A window $w$ of size $L_{w} = |p|/k$ is to process text $t$ with
-sliding window of one symbol step.
-$k_{di} = |p|*(\frac{1}{k}+1)(1-k^2)$ is threshold value for edit distance.
-$I$ --- interval of size $[|p|k,\frac{|p|}{k}]$ that set boundaries for lenght of matching substrings.
-$d_{di}$ --- function that measure similarity between two strings.
+First, we denote several parameters are used in algorithm~\cite{.}.
+Let $k$, a set similarity measure, be a constant in interval $[\frac{1}{\sqrt{3}},1]$.
+A window $w$ of size $L_{w} = |p|/k$ is to process text $t$ with sliding window of one symbol step.
+Let $k_{di} = |p|*(\frac{1}{k}+1)(1-k^2)$ be a threshold value for edit distance,
+$I$~---~interval of size $[|p|k,\frac{|p|}{k}]$ that sets boundaries for lenght of matching substrings,
+$d_{di}$~---~function measures similarity between given strings.
 
-The algorithm comprises of three phases.
+The algorithm (see Algorithm~\ref{alg:luciv}) comprises of three phases.
+At the first phrase text $t$ is processed with sliding window of size $L_{w}$ with one symbol step.
+Further, substrings that corrsepond to window $w$ are compared using edit distance\footnote{
+  Authors of~\cite{.} used lcs edit distance~---~where  operations substituion,removoval, addition of one symbol costs 2,1,1 respectively}
+and if $d_{di}(p,t_{w}) \leq k_{di}$, i.e. close enough, then they are added to set $W_{1}$ to be further proceeded. 
+On the second phase each of the detected substrings in $W_{1}$ shrunk, i.e their length can be decreased.
+\todo{More precisely, within each of the element of $W_{1}$ the largest one substring with legnth fall in $I$ that most similar to pattern $p$ according to $d_{di}$ is selected.}
+\todo{The set $W_{2}$ is a result of this phase.}
+At the final third phase, set $W_{2}$ is filtered by removing elements that fully contains or duplicates any other element of set $W_{2}$.
 
-At the first phrase  text $t$ is processed with sliding window of size $L_{w}$ with one symbol step.
-Further, substrings that corrsepond to window $w$ compared using edit distance\footnote{Authors of \cite{} used lcs edit distance --- where  operations substituion,removoval, addition of one symbol costs 2,1,1 respectively} and if $d_{di}(p,t_{w}) \leq k_{di}$ i.e  close enough, then they saved to set $W_{1}$ to be further proceeded. 
-
-On the second phase  each of the detected substrings in $W_{1}$ are shrunk i.e they lenght could be decreased.
-More preciesely, within each of the element of $W_{1}$ the largest one substring with legnth fall in $I$ that most similar to pattern $p$ according to $d_{di}$ is selected.
-The set $W_{2}$ is a result of this phase.
-
-At the final third phase  set $W_{2}$ iterated over to remove elements that fully contains in ohter elements of $W_{2}$ or duplicates.
-
-
-\begin{algorithm}[H]
+\begin{algorithm}[!t]
 \caption{PATTERN BASED NEAR DUPLICATE
 SEARCH ALGORITHM}\cite{}
 \label{alg:luciv}
@@ -293,31 +290,22 @@ Pseudocode:
 \end{algorithm}
 
 \paragraph{Running time analysis}
-\emph{1st phase}.The first phase requires at most  $O(|t||p|^2)$ due to fact
-that computing cost of edit distance is $|p|^2$ for strings of size $O(|p|)$ and we need to process $O(|t|-\frac{|p|}{k})=O(|t|)$ windows.
-\emph{2nd phase}. 
-The cardinality of set $W_{1}$  at worst case be $O(|t|)$.
-Thus, first loop will be iterated over $O(|t|)$ times.
+\todo{The first phase requires at most $O(|t| \times |p|^2)$ due to fact that computing cost of edit distance is $|p|^2$ for strings of size $O(|p|)$ and we need to process $O(|t|-\frac{|p|}{k})=O(|t|)$ windows.}
+The \todo{cardinality} of set $W_{1}$ at worst case is $O(|t|)$.
+Thus, the first loop of the second phase will be iterated over $O(|t|)$ times.
 The second loop refers to iteration over $I$ set with cardinality $O(\frac{|p|}{k}-|p|k) = O(|p|)$.
-The third loop requires at most $O(|p|)$ since we again goes with sliding window.
-The compare operation requires at most $O(|p|^2)$ since both
-stirng of size $O(|p|)$.
-Thus, the total running time compleixty of second phase is $O(|p|^4|t|)$ at worst case.
+The third loop requires at most $O(|p|)$ \todo{?} since we again goes with sliding window.
+The compare operation requires at most $O(|p|^2)$ \todo{?} since both strings are of size $O(|p|)$.
+Thus, the total running time compleixty of the second phase is $O(|p|^4|t|)$ at worst case.
+Note, cardinality of set $W_{2}$ is equal to $W_{1}$ and thus at worst case is $O(|t|)$.
+Finally, the third phase requires $O(|t| \times \log |t|)$ time.
+Thus, the total time complexity of the algirthm can be estimated as
+$O(max(|t| \times |p|^4, |t| \times \log|t|))$.
 
-\emph{3rd phase}. 
-Note that cardinality of set $W_{2}==W_{1}$ and thus at worst case is $O(|t|)$.
-Then, this phase requires $O(|t| \log |t|)$ time. 
-
-Thus,the total time complexity of algirthms estimates as 
-$O(max(|t||p|^4,|t| \log|t|))$.
-
-Algorithm also possesses completnesses property defined in their paper. 
+The algorithm also possesses completeness property.
 To detailed description refer to \cite{}.
-We just state their following theorem:
-\begin{theorem}\cite{Luciv}
-For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$ and near
-duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied in
-respect to the output of phase 2.
+We just state the following theorem:
+\begin{theorem}~\cite{Luciv}
+For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$, and near duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied with respect to the output of phase 2.
 \end{theorem}
-
-Theorem states that if pattern $p$ is presented in text $t$ then all duplicates of it would be found in text $t$. 
+\todo{In other words, the theorem states that if the pattern is presented in the text then all duplicates of it would be found in the text.}
