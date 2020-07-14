@@ -16,11 +16,11 @@ Other special cases of AMatch are \emph{approximate pattern matching with k mism
 
 One of the common approaches to solving AMAtch problem is the utilization of string similarity problem solutions.
 Latter represents a set of fundamental problems such as \emph{edit distance}, \emph{longest common subsequence}, and \emph{sequence alignment}.
-\todo{In the paper, we primarily focus on the usage of the latter two when developing algorithms.}
+During algorithms design, we primarily focused on the usage of the latter two.
 
 Recently there has been developed an algorithm for solving one particular \emph{AMatch} extension~---~the one with a length constarint on the resulting substrings~\cite{.}.
 \todo{Describe why the problem is actual}.
-Despite the algorithm \todo{has poor result in terms of running time complexity}, the proposed solution possesses a completeness property, i.e it founds \emph{all} non-intersected clones of a given pattern with specified similarity threshold and length constraint on matching substrings.
+Despite the algorithm has poor time complexity, the proposed solution possesses a completeness property, i.e it founds \emph{all} non-intersected clones of a given pattern with specified similarity threshold and length constraint on matching substrings.
 Precisely due to the completeness property the algorithm is of intereset in this paper.
 The algorithm is described in section~\ref{.} while the developed improved version is presented in section~\ref{.}.
 
@@ -80,6 +80,8 @@ The semi-local lcs matrix $H_{a,b}$ comprises from four quadrants associated wit
     H_{a,b}^{str-sub} & H_{a,b}^{pre-suf} 
   \end{bmatrix}    
 \end{equation}
+
+Semi-local lcs can be solved within the optimal running time compexity, $O(|a| \times |b|)$, by a number of algorithms (\todo{such as...})~\cite{.}.
 
 \subsection{Matrix properties}
 
@@ -144,9 +146,8 @@ In~\cite{tiskin} is proved that $H_{a,b}$ is unit anti Monge.
 Also, it is proved that this matrix may be decomposed to permutation matrix, i.e into a \emph{cross-difference} matrix.
 It allows to store $H_{a,b}$ implicitly and query any element of $H_{a,b}$ via dominance sum query (orthogonal range queries).
 Thus, there are several ways to store matrix $H_{a,b}$ or one of its quadrants implicitly.
-A simple storing of two lists of permutations requires $O(|a|+|b|)$ space and time \todo{with $O(|a|+|b|)$} orthogonal range queries (need to check how many points dominated by given point), whereas more sophisticated approach requires $O(|a|+|b|)$  space with $O( (|a|+|b|) \sqrt{\log{ (|a| +|b|)} } )$ preprocessing time and allows to query any point of $H$ in $O(\frac{\log (|a|+|b|)}{\log \log (|a|+|b|)})$ time.  
-
-\todo{The one useful proposition of $H$ is the following}~\cite{.}.
+A simple storing of two lists of permutations requires $O(|a|+|b|)$ space and time providing $O(|a|+|b|)$ orthogonal range query time complexity (since it is necessary to check how many points dominated by given point), whereas more sophisticated approach requires $O(|a|+|b|)$ space with $O( (|a|+|b|) \sqrt{\log{ (|a| +|b|)} } )$ preprocessing time and allows to query any point of $H$ in $O(\frac{\log (|a|+|b|)}{\log \log (|a|+|b|)})$ time.  
+Moreover, while arbitrary query has a non-constant time complexity, the following proposition stands that adjacent matrix elements can be queried within a constant time~\cite{.}.
 \begin{proposition}
   Given a permutation matrix $P$ and a value $P^{\nearrow}[i; j]$,
   values $P^{\nearrow}[i +- 1; j], P^{\nearrow}[i; j +- 1]$, where they exist,
@@ -157,9 +158,6 @@ We particularly interested in the left lower quadrant that refers to string-subs
 \begin{equation}
 H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]) \quad i,j \in [0,|b|] 
 \end{equation}
-
-\todo{There exists several algorithms \red{second on,recursive not described as i see} that solve \emph{semi-local lcs}.
-Both have the optimal running time $O(|a| \times |b|)$ for given dynamic problem\cite{}\red{Impossibility faster then pt}.}
 
 \subsection{Semi-local sa}
 The semi-local sequence alignment is a generalization of semi-local lcs in the same manner as sequence alignment is a generalization of lcs.
@@ -173,11 +171,11 @@ Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  semi-l
 The \emph{associated matrix} for semi-local sa is defined by analogy as for semi-local lcs.
 
 Semi-local sa problem can be solved by reducing to semi-local lcs.
-First, note that the scoring scheme from~\ref{formula:sa} may be simplified by so-called normalization~\cite{.}:\todo{check equation}
-\begin{equation}\label{weightNormalization}
+First, note that the scoring scheme from~\ref{formula:sa} may be simplified by so-called normalization~\cite{.}:\begin{equation}\label{weightNormalization}
   \begin{array}{ll}
-    w &= (w_{+}, w_{0} , w_{-}) \xrightarrow{} (w_{+} +2x , w_{0} + 2x , w_{-} + x)\\
-    &= ( \frac{w_{+} +2x}{w_{+} +2x} , \frac {w_{0} + 2x}{w_{+} +2x} , \frac{w_{-} + x}{w_{+} +2x})_{x=-w_{-}} = (1,\frac{\mu}{v} ,0) 
+    w &= (w_{+}, w_{0} , w_{-}) = (w_{+} +2x , w_{0} + 2x , w_{-} + x), \forall x\footnote{\todo{...}}\\
+    &= ( \frac{w_{+} +2x}{w_{+} +2x} , \frac {w_{0} + 2x}{w_{+} +2x} , \frac{w_{-} + x}{w_{+} +2x})
+    \overset{x=-w_{-}}{\to} (1,\frac{\mu}{v} ,0) 
   \end{array}
 \end{equation}
 The resulted scoring scheme $w_{normalized} = (1,\frac{\mu}{v} ,0)$ is called the \emph{normalized scoring scheme}.
@@ -195,13 +193,12 @@ The space complexity also increses by factor $v$. }
 %Thus, the rinning time and space complexity of semi-local sa is %$(v(|a|+|b|) \times v(|a|+|b|) $ and 
 \todo{The detalied description can be found in TISKIN BOOK~\cite{.}.}
 
- 
+
 \subsection{Range maximum/minimum queries}
 
 Range maximum (minimum) que\-ries (\emph{rmq}, submatrix query) refer to a search of the maximum (minimum) element in submatrix $[i_{1}:i{_2}]\times [j_{1}:j{_2}]$ of a given matrix $M$ of size $n \times n$.
 The associated data structure that can report maximum (minimum) element in any submatrix query is called \emph{range maximum (minimum) data structure}.
-\todo{In general, ... For the generic case of Matrix $M$ it is not possible to
-achieve running time faster then $O(n^2)$ due to fact that storing matrix $M$ requires $O(n^2)$.}
+\todo{In general, this data structure cannot be constructed in time less than $O(n^2)$ since storing matrix $M$ requires al teast $O(n^2)$ space.}
 Nonetheless, it is not the case if considering Monge matrices which can be stored implicitly.
 % Nonetheless, it is not the case when considering Monge matrices.the situation is changed if we  consider special cases such as Monge matrices.
 %Monge matrices can  be (and often) stored implicilty.
@@ -220,8 +217,7 @@ Given an $n \times n$ staircase\footnote{\todo{Defintion}} Monge matrix $M$, a d
 Given an $n \times n$ partial Monge matrix\footnote{\todo{Definition}} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
 \end{theorem}
 
-\todo{The above results apply both to range minimum queries and to Monge matrices with non-constant access $O(\beta)$ to queries.}
-The latter one, costs in  increased construction time and query time by factor $\beta$. 
+If the random access to Monge matrix is non-constant, say $O(\beta)$, then the results above are satisfied with time construction and query times increased by factor $\beta$.
   
 %\begin{definition}
 %Given  query of type $i_{1},i_{2},j_1,j_2, i_1,i_2 \in [0,]$
@@ -308,4 +304,3 @@ We just state the following theorem:
 \begin{theorem}~\cite{Luciv}
 For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$, and near duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied with respect to the output of phase 2.
 \end{theorem}
-\todo{In other words, the theorem states that if the pattern is presented in the text then all duplicates of it would be found in the text.}
