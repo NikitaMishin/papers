@@ -18,11 +18,10 @@ One of the common approaches to solving AMAtch problem is the utilization of str
 Latter represents a set of fundamental problems such as \emph{edit distance}, \emph{longest common subsequence}, and \emph{sequence alignment}.
 During algorithms design, we primarily focused on the usage of the latter two.
 
-In some application where approximate pattern matching is used there need to impose a constraint on length of matched substrings.
-\red{
-One example is when it's applied to biology where substrings with small size may be less important in a biological sense then substrings with less similarity score and much larger length.
-Same true for upper bound on the length.
-The other example is clone detection when you want to decrease the false-positive rate}.
+In some approximate pattern matching applications, it may be crucial to impose a constraint on length of the matched substrings.
+In bioinformatics, for example, substrings with small size may be less important in a biological sense then substrings with less similarity score but much larger length~\cite{.}.
+Same is also true for the length upper bound.
+Besides one may use length constraints in clone detection in software code and documentation tools in order to decrease false-positive rate~\cite{.}.
 Recently there has been developed an algorithm for solving this particular \emph{AMatch} extension~\cite{.}.
 Despite the algorithm has poor time complexity, the proposed solution possesses a completeness property, i.e it founds \emph{all} non-intersected clones of a given pattern with specified similarity threshold and length constraint on matching substrings.
 Precisely due to the completeness property the algorithm is of intereset in this paper.
@@ -85,7 +84,7 @@ The semi-local lcs matrix $H_{a,b}$ comprises from four quadrants associated wit
   \end{bmatrix}    
 \end{equation}
 
-Semi-local lcs can be solved within the optimal running time compexity, $O(|a| \times |b|)$, by a number of algorithms (\red{such as one that uses fast distance multiplication of unit-monge matrices~\cite{} or one that uses seaweed combing   }~\cite{.}).
+Semi-local lcs can be solved within the optimal running time complexity, $O(|a| \times |b|)$, by a number of algorithms based, for example, on fast distance multiplication of unit-Monge matrices~\cite{.} or seaweed combing~\cite{.}.
 
 \subsection{Matrix properties}
 
@@ -190,11 +189,9 @@ Then to query initial score $sa$ for scoring scheme $w$ knowing $sa_{normalized}
   \end{aligned}
 \end{equation}
 
-\red{Finally, the blown-up technique\footnote{Each of the input length increase by factor $v$} is applied after reducing scoring scheme.
-At this stage we have transitioned to \emph{semi-local lcs} problem which can be solved in $O(|a||b|v^2)$ time by algorithm\cite{.}.
-The usage of second one algorithm allows to reduce of the one $v$}.
-
-
+Finally, the blown-up technique\footnote{Each of the input length increases by factor $v$.} is applied after reducing the scoring scheme.
+At this stage, we have transitioned to semi-local lcs problem which can be solved in $O(|a| \times |b| \times v^2)$ time by algorithm from~\cite{.}.
+Finally, unit-Monge matrix multiplication algorithm reduces time complexity in $v$ times\todo{~\cite{.}}.
 
 %\todo{Nonetheless, only one of the described algorithm time %complexity increases in $v^{2}$ times, the second one only $v$. %\red{Bad sentecnce}.
 %The space complexity also increses by factor $v$. }
@@ -207,12 +204,12 @@ The usage of second one algorithm allows to reduce of the one $v$}.
 
 Range maximum (minimum) que\-ries (\emph{rmq}, submatrix query) refer to a search of the maximum (minimum) element in submatrix $[i_{1}:i{_2}]\times [j_{1}:j{_2}]$ of a given matrix $M$ of size $n \times n$.
 The associated data structure that can report maximum (minimum) element in any submatrix query is called \emph{range maximum (minimum) data structure}.
-\red{In general, optimal space complexity of this data structure is $O(n^2)$  since storing matrix $M$ requires al teast $O(n^2)$ space.}
+In general, the optimal space complexity of this data structure is $O(n^2)$ since storing the matrix requires at least $O(n^2)$ space.
 Nonetheless, it is not the case if considering Monge matrices which can be stored implicitly.
 % Nonetheless, it is not the case when considering Monge matrices.the situation is changed if we  consider special cases such as Monge matrices.
 %Monge matrices can  be (and often) stored implicilty.
-\red{There have long decades of research about \emph{rmq} on Monge matrices \cite{}.}
-The recent research provides the following result~\cite{.}.
+\emph{rmq} on Monge matrices has been a source of research over the past decades~\cite{}.
+The recent research provides the following results~\cite{.}.
 
 \begin{theorem}~\cite{.}
 Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n)$ time to answer submatrix maximum queries in $O(\log \log n)$ time when random access to Monge matrix is $O(1)$.
@@ -223,7 +220,7 @@ Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be c
 %end{theorem}
 
 \begin{theorem}~\cite{.}
-Given an $n \times n$ partial\footnote{Partial matrix is the matrix where some entries undefined, but defined entries in each coloumn and row are contigous} Monge matrix\footnote{\red{A partial Monge matrix is  partial matrix where the Monge property  is holds true for every four defined entries in Matrix}} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
+  Given an $n \times n$ partial\footnote{Partial matrix is the matrix where some entries undefined, but defined entries in each coloumn and row are contigous} Monge matrix\footnote{A partial totally Monge matrix is a partial matrix whose defined entries satisfy the Monge property.} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
 \end{theorem}
 
 If the random access to Monge matrix is non-constant, say $O(\beta)$, then the results above are satisfied with time construction and query times increased by factor $\beta$.
@@ -247,11 +244,8 @@ Further, substrings that corrsepond to window $w$ are compared using edit distan
   Authors of~\cite{.} used lcs edit distance~---~where  operations substituion,removoval, addition of one symbol costs 2,1,1 respectively}
 and if $d_{di}(p,t_{w}) \leq k_{di}$, i.e. close enough, then they are added to set $W_{1}$ to be further proceeded. 
 On the second phase each of the detected substrings in $W_{1}$ shrunk, i.e their length can be decreased.
-\red{
-More precisely, each element $w \in W_{1}$ is iterated over
-to find the longest one substring in $w$ with lenght fall $I$ in interval that is most similar to pattern $p$.}
-\red{
-After these phase we have set $W_{2}$}
+More precisely, each element $w \in W_{1}$ is iterated over to find its longest substring such that its length falls in interval $I$ and it is the most similar to pattern $p$.
+Set $W_2$ stands for the result of this phase.
 At the final third phase, set $W_{2}$ is filtered by removing elements that fully contains or duplicates any other element of set $W_{2}$.
 
 \begin{algorithm}[!t]
@@ -298,24 +292,21 @@ Pseudocode:
 \end{algorithm}
 
 \paragraph{Running time analysis}
-\red{
-The running time complexity of the first phase is $O(|t| \times |p|^2)$ since there will be at proccessed at most
-$O(|t|-\frac{|p|}{k})=O(|t|)$ windows with size $L_{w}$ 
-and running time complexity of edit distance is $O(|p|^2)$
-}.
-Note that cardinality of set $W_{1}$ could be meaused as $O(|t|)$ at worst case.
-\red{Thus, the the first loop of the second phase will be iterated over $O(|t|)$ times. (Line 8)
-The second loop (Line 10) refers to iteration over $I$ set with cardinality $O(\frac{|p|}{k}-|p|k) = O(|p|)$.
-The third loop (Line 11) requires at most $O(|p|)$ iterations  since we again goes with sliding window.
-The running time complexotity of  \emph{Compare} operation(Line 12) is at most $O(|p|^2)$ since both strings are of size $O(|p|)$.
-Thus, the total running time compleixty of the second phase is $O(|p|^4|t|)$ at worst case.
+At first phase at most $O(|t|-\frac{|p|}{k})=O(|t|)$ windows of size $L_{w}$ will be processed.
+Since edit distance running time complexity is $O(|p|^2)$, the overall time complexity of the first phase is $O(|t| \times |p|^2)$.
+Note, cardinality of set $W_{1}$ could be meaused as $O(|t|)$ at worst case.
+Thus, the the first loop of the second phase will be iterated over $O(|t|)$ times (line 8).
+The second loop (line 10) refers to iteration over set $I$ with cardinality $O(\frac{|p|}{k}-|p|k) = O(|p|)$.
+The third loop (line 11) requires at most $O(|p|)$ iterations since again a sliding window is used.
+The running time complexity of \emph{Compare} operation (line 12) is at most $O(|p|^2)$ since both strings are of size $O(|p|)$.
+Thus, the total running time complexity of the second phase can be estimated as $O(|p|^4|t|)$ at worst case.
 Note, cardinality of set $W_{2}$ is equal to $W_{1}$ and thus at worst case is $O(|t|)$.
 Finally, the third phase requires $O(|t| \times \log |t|)$ time.
 Thus, the total time complexity of the algirthm can be estimated as
 $O(max(|t| \times |p|^4, |t| \times \log|t|))$.
-}
+
 The algorithm also possesses completeness property.
-To detailed description refer to \cite{}.
+To detailed description refer to~\cite{.}.
 We just state the following theorem:
 \begin{theorem}~\cite{Luciv}
 For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$, and near duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied with respect to the output of phase 2.
