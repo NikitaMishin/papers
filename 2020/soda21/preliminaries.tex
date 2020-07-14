@@ -278,6 +278,50 @@ The set $W_{2}$ is a result of this phase.
 
 At the final third phase  set $W_{2}$ iterated over to remove elements that fully contains in ohter elements of $W_{2}$ or duplicates.
 
+
+\begin{algorithm}[H]
+\caption{PATTERN BASED NEAR DUPLICATE
+SEARCH ALGORITHM}\cite{}
+\label{alg:luciv}
+Input: pattern $p$, text $t$, $k$ ---similiarity measure\\
+Output: Set of non-intersected clones of pattern $p$ in text $t$\\
+Pseudocode:
+\begin{algorithmic}[1]
+\STATE{$W_1 = \emptyset$}
+\COMMENT{1st phase}
+\FOR{$\forall w_{1}:w_{1} \in t \land |w_{1}|=L_{w} $}
+\IF{$d_{di} \leq k_{di}$}
+\STATE{add $w_1$ to $W_{1}$}
+\ENDIF
+\ENDFOR
+\STATE{$W_{2} = \emptyset$}
+\COMMENT{2d phase}
+
+\FOR{$w \in  W_{1}$}
+\STATE{$w^{'}_{2} = w$}
+\FOR{$l \in I $}
+\FOR{$\forall w_2: w_2 \subseteq  w \land |w_2| = l$} 
+\IF{$Compare(w_{2}, w_{2}^{'},p)$}
+\STATE{$w_{2}^{'} = w_2$} 
+\ENDIF
+\ENDFOR
+\ENDFOR
+\STATE{add $w_{2}^{'}$ to $W_{2}$}
+\ENDFOR
+
+\STATE{ $W_3 = UNIQUE(W_2)$}
+
+\COMMENT{3rd phase }
+\FOR{$w \in W_3$}
+\IF{$\exists w^{'} \in W_3:w \subset w^{'} $}
+\STATE{ $remove$ $w$ $from$ $W_3$}
+\ENDIF
+\ENDFOR
+\RETURN $W_3$
+
+\end{algorithmic}
+\end{algorithm}
+
 \paragraph{Running time analysis}
 \emph{1st phase}.The first phase requires at most  $O(|t||p|^2)$ due to fact
 that computing cost of edit distance is $|p|^2$ for strings of size $O(|p|)$ and we need to process $O(|t|-\frac{|p|}{k})=O(|t|)$ windows.
