@@ -162,47 +162,38 @@ H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]) \quad i,j \in [0,|b|]
 Both have the optimal running time $O(|a| \times |b|)$ for given dynamic problem\cite{}\red{Impossibility faster then pt}.}
 
 \subsection{Semi-local sa}
-The semi-local sequence alignment (sa) is a generalazation of semi-local lcs in same sense as sequence alignemnt is generelaztion of lcs.
-
-Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the semi-local sa  asks about
-sa scores for following:
-\begin{enumerate}
+The semi-local sequence alignment is a generalization of semi-local lcs in the same manner as sequence alignment is a generalization of lcs.
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  semi-local sa asks about sa scores for the following:
+\begin{itemize}
 \item \emph{string-substring}: whole $a$ against every substring of $b$
 \item \emph{substring-string}: whole $b$ against every substring of $a$
 \item \emph{prefix-suffix}: every prefix of $a$ against every suffix of $b$
 \item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$
-\end{enumerate} 
+\end{itemize} 
+The \emph{associated matrix} for semi-local sa is defined by analogy as for semi-local lcs.
 
-The associated matrix for \emph{semi-local sa} is defined analogously as for \emph{semi-local lcs}.
-
-The approach for solving \emph{semi-local sa} is as follows.
-The problem reduced to \emph{semi-local lcs}.
-First, note that scoring scheme in \ref{formula:sa}
-may be simplified by so called normalization\cite{}:
+Semi-local sa problem can be solved by reducing to semi-local lcs.
+First, note that the scoring scheme from~\ref{formula:sa} may be simplified by so-called normalization~\cite{.}:\todo{check equation}
 \begin{equation}\label{weightNormalization}
-    \begin{aligned}
-    w = (w_{+}, w_{0} , w_{-}) \xrightarrow{} (w_{+} +2x , w_{0} + 2x , w_{-} + x) =\\ ( \frac{w_{+} +2x}{w_{+} +2x} , \frac {w_{0} + 2x}{w_{+} +2x} , \frac{w_{-} + x}{w_{+} +2x})_{x=-w_{-}} = (1,\frac{\mu}{v} ,0) 
-    \end{aligned}
+  \begin{array}{ll}
+    w &= (w_{+}, w_{0} , w_{-}) \xrightarrow{} (w_{+} +2x , w_{0} + 2x , w_{-} + x)\\
+    &= ( \frac{w_{+} +2x}{w_{+} +2x} , \frac {w_{0} + 2x}{w_{+} +2x} , \frac{w_{-} + x}{w_{+} +2x})_{x=-w_{-}} = (1,\frac{\mu}{v} ,0) 
+  \end{array}
 \end{equation}
-The resulted scoring scheme $w_{normalized} = (1,\frac{\mu}{v} ,0)$ called normalized scoring scheme.
-
-Then to query initial score $sa$ for scoring scheme $w$
-knowing $sa_{normalized}$ for $w_{normalized}$ you need to apply reverse regularization:
+The resulted scoring scheme $w_{normalized} = (1,\frac{\mu}{v} ,0)$ is called the \emph{normalized scoring scheme}.
+Then to query initial score $sa$ for scoring scheme $w$ knowing $sa_{normalized}$ for $w_{normalized}$ one need to apply reverse regularization:
 \begin{equation}
-    \begin{aligned}
+  \begin{aligned}
     sa(a,b,w) = sa_{normalized}  (w_{+} - 2w_{-}) +  w_{-} (|a| + |b|)
-\end{aligned}
+  \end{aligned}
 \end{equation}
 
-The blown-up tecnhique is applied after reducing scoring scheme
-which increases both input strings in $v$ times.
-Nonetheless, only one of the described algorithm time complexity increases in $v^{2}$ times, the second one only $v$. \red{Bad sentecnce}.
-The space complexity also increses by factor $v$. 
+Finally, the blown-up technique is applied after reducing scoring scheme which increases both input strings in $v$ times.
+\todo{Nonetheless, only one of the described algorithm time complexity increases in $v^{2}$ times, the second one only $v$. \red{Bad sentecnce}.
+The space complexity also increses by factor $v$. }
 %(we store permitation matrix of size $(v(|a|+|b|) \times v(|a|%%+|b|) $) 
-
 %Thus, the rinning time and space complexity of semi-local sa is %$(v(|a|+|b|) \times v(|a|+|b|) $ and 
-
-For detalied description we refer readers to TISKIN BOOK\cite{}.
+\todo{The detalied description can be found in TISKIN BOOK~\cite{.}.}
 
  
 \subsection{Range maximum/minimum queries}
