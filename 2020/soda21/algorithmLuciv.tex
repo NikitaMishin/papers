@@ -1,22 +1,25 @@
 \section{Algorithm for near duplicate detection}
 \label{section:luciv}
 
-We now describe an improved version of Luciv et.al. algorithm \cite{luciv2019interactive} by utilizing a \emph{semi-local sa} solution.
-Then we present proof that improved version preserves completnesess property.
-It is achieved by imitating all phases of the algorithm. 
- 
+In the section the improved version of Luciv et.al. algorithm~\cite{luciv2019interactive} is presented.
+The utilization of semi-local sequence alignment algorithms in all algorithm phases improves overall time complexity.
+%% We now describe an improved version of  by utilizing a \emph{semi-local sa} solution.
+%% Then we present proof that improved version preserves completnesess property.
+%% It is achieved by imitating all phases of the algorithm. 
+It is also proved that the improved algorithm preserves all advantages of the initial one stated at~\cite{luciv2019interactive} such as search completeness.
 
 \subsection{Algorithm description}
 
-The algorithm comprises three phases as in \cite{luciv2019interactive}.
-At phase one (Lines 1-3) \emph{semi-local sa} problem is solved for the pattern $p$ against the whole text $t$.
+As the base one, the presented algorithm consists of three sequential phases.
+Moreover, each step of the presented algorithm imitates the corresponding step of the base one.
+% As the base one, the presented algorithm comprises three phases.
+
+At the first phase (lines 1-3) semi-local sa problem is solved for pattern $p$ against the whole text $t$.
 This solution provides access to the string-substring matrix $H^{str-sub}_{p,t}$ which allows performing fast queries of \emph{sa} score for pattern $p$ against every substring of text $t$.
-We apply implicitly transposition and inverse operation on $H^{str-sub}_{p,t}$:
-\begin{equation}
-	M[j,i]:= -H^{str-sub}_{p,t}[i,j]
-\end{equation}
-Note that, transposition operation preserves (\emph{anti}) \emph{Monge} property whereas inverse operation make \emph{anti Monge} matrix \emph{Monge} and vice versa. 
-So, matrix $M$ is \emph{Monge} matrix.
+Then, we construct matrix $M$ by applying transposition and inverse operation implisitly on $H^{str-sub}_{p,t}$:
+$$M[j,i]:= -H^{str-sub}_{p,t}[i,j].$$
+Note, transposition operation preserves (anti) Monge property whereas inverse operation transforms anti-Monge matrix into the Monge one and vice versa. 
+Thus, $M$ is a Monge matrix.
 
 The second phase comprises several steps (Lines 4-6).
 First, we want to get for each prefix of the text $t$ the longest suffix that has the highest similarity with the given pattern $p$ with the following constraint.
