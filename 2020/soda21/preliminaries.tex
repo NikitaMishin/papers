@@ -216,11 +216,58 @@ For detalied description we refer readers to TISKIN BOOK\cite{}.
 \subsection{Range maximum/minimum queries}
 
 
-partial monge matrix
+Defimition range queries
 
-Say about range queries (about soda12, soda14 and new result that we will be used)
+
+Say about range queries 
+
+Result in monge matrix rmq .(about soda12, soda14 and new result that we will be used)
+
+
+Thorerems  
+
+Definition partial monge matrix
+
+Thereom 
+
 
 \subsection{Near-duplicate detection algorithm}
+First, we denote several parameters, that is used in algorithm \cite{}.
+$k$--- constant in interval $[\frac{1}{\sqrt{3}},1]$ that set similarity measure.  
+A window $w$ of size $L_{w} = |p|/k$ is to process text $t$ with
+sliding window of one symbol step.
+$k_{di} = |p|*(\frac{1}{k}+1)(1-k^2)$ is threshold value for edit distance.
+$I$ --- interval of size $[|p|k,\frac{|p|}{k}]$ that set boundaries for lenght of matching substrings.
+$d_{di}$ --- function that measure similarity between two strings.
 
-Describe luciv algo
+The algorithm comprises of three phases.
 
+At the first phrase  text $t$ is processed with sliding window of size $L_{w}$ with one symbol step.
+Further, substrings that corrsepond to window $w$ compared using edit distance\footnote{Authors of \cite{} used lcs edit distance --- where  operations substituion,removoval, addition of one symbol costs 2,1,1 respectively} and if $d_{di}(p,t_{w}) \leq k_{di}$ i.e  close enough, then they saved to set $W_{1}$ to be further proceeded. 
+
+On the second phase  each of the detected substrings in $W_{1}$ are shrunk i.e they lenght could be decreased.
+More preciesely, within each of the element of $W_{1}$ the largest one substring with legnth fall in $I$ that most similar to pattern $p$ according to $d_{di}$ is selected.
+The set $W_{2}$ is a result of this phase.
+
+At the final third phase  set $W_{2}$ iterated over to remove elements that fully contains in ohter elements of $W_{2}$ or duplicates.
+
+\paragraph{Running time analysis}
+\emph{1st phase}.The first phase requires at most  $O(|t||p|^2)$ due to fact
+that computing cost of edit distance is $|p|^2$ for strings of size $O(|p|)$ and we need to process $O(|t|-\frac{|p|}{k})=O(|t|)$ windows.
+\emph{2nd phase}. 
+The cardinality of set $W_{1}$  at worst case be $O(|t|)$.
+Thus, first loop will be iterated over $O(|t|)$ times.
+The second loop refers to iteration over $I$ set with cardinality $O(\frac{|p|}{k}-|p|k) = O(|p|)$.
+The third loop requires at most $O(|p|)$ since we again goes with sliding window.
+The compare operation requires at most $O(|p|^2)$ since both
+stirng of size $O(|p|)$.
+Thus, the total running time compleixty of second phase is $O(|p|^4|t|)$ at worst case.
+
+\emph{3rd phase}. 
+Note that cardinality of set $W_{2}==W_{1}$ and thus at worst case is $O(|t|)$.
+Then, this phase requires $O(|t| \log |t|)$ time. 
+
+Thus,the total time complexity of algirthms estimates as 
+$O(max(|t||p|^4,|t| \log|t|))$
+
+\red{Add luciv pseudocode}
