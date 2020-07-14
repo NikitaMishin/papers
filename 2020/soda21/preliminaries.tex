@@ -339,10 +339,15 @@ Note that cardinality of set $W_{2}==W_{1}$ and thus at worst case is $O(|t|)$.
 Then, this phase requires $O(|t| \log |t|)$ time. 
 
 Thus,the total time complexity of algirthms estimates as 
-$O(max(|t||p|^4,|t| \log|t|))$
+$O(max(|t||p|^4,|t| \log|t|))$.
 
+Algorithm also possesses completnesses property defined in their paper. 
+To detailed description refer to \cite{}.
+We just state their following theorem:
 \begin{theorem}\cite{Luciv}
-Compltensess theorem
+For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$ and near
+duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied in
+respect to the output of phase 2.
 \end{theorem}
 
-\red{Add luciv pseudocode}
+Theorem states that if pattern $p$ is presented in text $t$ then all duplicates of it would be found in text $t$. 
