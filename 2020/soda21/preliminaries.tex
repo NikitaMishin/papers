@@ -75,7 +75,7 @@ The \emph{semi-local lcs matrix}  $H_{a,b}$ for strings a,b defined as follows:
 \begin{equation}
 	H_{a,b}[i,j] = if (j\leq i) j-i  else lcs(a,b^{pad}[i,j]) 
 \end{equation} 
-where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $.
+where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $ and $b^{pad}= ?^{|a|}b?^{|a|}$, $?$--- wildcard symbol that matches any other symbol.
 \end{definition}
 The semi-local lcs matrix $H_{a,b}$ comprises from four
 quadrant associated with described  subproblems:
@@ -146,10 +146,15 @@ The example dominance sum matrix:
 \end{equation}
 
 In \cite{tiskin} is proved that $H_{a,b}$ is unit anti Monge.
-Also it is proved that  this matrix may be decomposed to permuation matrix.
+Also it is proved that  this matrix may be decomposed to permuation matrix i.e into \emph{cross-difference} matrix.
 It allows to store $H_{a,b}$ implicitly and query any element of $H_{a,b}$ via dominance sum query (orthogonal range queries).
+Thus, there may be several ways to storing matrix $H_{a,b}$ or one of it quadrant implicitly.
+A simple storing of two list of permutation gives $O(|a|+|b|)$
+space and time complexity with $O(|a|+|b|)$ orthogonal range queries (need to check  how many points dominated by given point), whereas more sophisticated approach requires
+$O(|a|+|b|)$  space with $O( (|a|+|b|) \sqrt{\log{ (|a| +|b|)} } )$ preprocessing time and allows to query any point of $H$ in $O(\frac{\log (|a|+|b|)}{\log \log (|a|+|b|)})$ time.  
 
-\begin{proposition}
+The one useful proposition of $H$ is following.
+\begin{proposition}\cite{}
 Given a permutation matrix $P$ and the value
 $P^{\nearrow}[i; j]$, the values $P^{\nearrow}[i +- 1; j], P^{\nearrow}[i; j +- 1]$, where they exist, can
 be queried in time $O(1)$\cite{}.
@@ -161,7 +166,8 @@ We particulary interesting in lower left quadrant that refers to string substrin
 H_{a,b}^{str-sub}[i,j] = lcs(a,b[i,j]),i,j \in [0,|b|] 
 \end{equation}
 
-
+There exists several algorithms \red{second on,recursive not described as i see} that solve \emph{semi-local lcs}.
+Both have the optimal running time $O(|a||b|)$ for given dynamic problem\cite{}\red{Impossibility faster then pt}.
 
 \subsection{Semi-local sa}
 The semi-local sequence alignment (sa) is a generalazation of semi-local lcs in same sense as sequence alignemnt is generelaztion of lcs.
@@ -177,16 +183,40 @@ sa scores for following:
 
 The associated matrix for \emph{semi-local sa} is defined analogously as for \emph{semi-local lcs}.
 
+The approach for solving \emph{semi-local sa} is as follows.
+The problem reduced to \emph{semi-local lcs}.
+First, note that scoring scheme in \ref{formula:sa}
+may be simplified by so called normalization\cite{}:
+\begin{equation}\label{weightNormalization}
+    \begin{aligned}
+    w = (w_{+}, w_{0} , w_{-}) \xrightarrow{} (w_{+} +2x , w_{0} + 2x , w_{-} + x) =\\ ( \frac{w_{+} +2x}{w_{+} +2x} , \frac {w_{0} + 2x}{w_{+} +2x} , \frac{w_{-} + x}{w_{+} +2x})_{x=-w_{-}} = (1,\frac{\mu}{v} ,0) 
+    \end{aligned}
+\end{equation}
+The resulted scoring scheme $w_{normalized} = (1,\frac{\mu}{v} ,0)$ called normalized scoring scheme.
 
+Then to query initial score $sa$ for scoring scheme $w$
+knowing $sa_{normalized}$ for $w_{normalized}$ you need to apply reverse regularization:
+\begin{equation}
+    \begin{aligned}
+    sa(a,b,w) = sa_{normalized}  (w_{+} - 2w_{-}) +  w_{-} (|a| + |b|)
+\end{aligned}
+\end{equation}
 
-blown-up tecnhique.
+The blown-up tecnhique is applied after reducing scoring scheme
+which increases both input strings in $v$ times.
+Nonetheless, only one of the described algorithm time complexity increases in $v^{2}$ times, the second one only $v$. \red{Bad sentecnce}.
+The space complexity also increses by factor $v$. 
+%(we store permitation matrix of size $(v(|a|+|b|) \times v(|a|%%+|b|) $) 
 
-theorems of running time complexity.
+%Thus, the rinning time and space complexity of semi-local sa is %$(v(|a|+|b|) \times v(|a|+|b|) $ and 
+
+For detalied description we refer readers to TISKIN BOOK\cite{}.
 
  
-\subsection{Monge matrix}
-Describe monge property  
+\subsection{Range maximum/minimum queries}
 
+
+partial monge matrix
 
 Say about range queries (about soda12, soda14 and new result that we will be used)
 
