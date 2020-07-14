@@ -22,75 +22,68 @@ Recently there has been developed an algorithm for solving one particular \emph{
 \todo{Describe why the problem is actual}.
 Despite the algorithm \todo{has poor result in terms of running time complexity}, the proposed solution possesses a completeness property, i.e it founds \emph{all} non-intersected clones of a given pattern with specified similarity threshold and length constraint on matching substrings.
 Precisely due to the completeness property the algorithm is of intereset in this paper.
-The algorithm is described in section~\ref{.} while the developed improved version is presented in section~\ref{•}.
+The algorithm is described in section~\ref{.} while the developed improved version is presented in section~\ref{.}.
 
 \subsection{Semi-local lcs}
-First of all we give definition of \emph{lcs} and \emph{sa}.
+% Semi-local lcs and sa are extensions of \emph{lcs} and \emph{sa} problems, respectively.
 
 \begin{definition}
-Given two strings $a$ and $b$  the longest common subsequence (\emph{LCS}) problem ask for the maximal length of the longest common subsequence of $a$ and $b$ (\emph{lcs(a,b)}).
+Given two strings $a$ and $b$  the longest common subsequence (\emph{LCS}) problem ask for the maximal length of the longest common subsequence of $a$ and $b$ ($lcs(a,b)$).
 \end{definition} 
-In other words, \emph{LCS} problem asks about maximal lcs score of two given string a and b ($lcs(a,b)$).
+\todo{In other words, \emph{LCS} problem asks about maximal $lcs$ score of two given string $a$ and $b$ ($lcs(a,b)$)}.
 
 \begin{definition}
-Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$  the sequence alignment (\emph{SA}) problem ask for the maximal alignment score between $a$ and $b$ ($sa(a,b)$).
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$ the sequence alignment (\emph{SA}) problem ask for the maximal alignment score between $a$ and $b$ ($sa(a,b,w)$).
 \end{definition}
 
-Scoring scheme determines how calulate alignment score of two aligned sequences.
-If pair of character in aligned sequences are matches (equals) then this pair  contributes to final alignemnt score $w_{+}$, if their mismatch it contributes $w_{0}$.
-If symbol $\alpha$ of one of the sequences is not aligned with  any other symbol from other sequence it means that $\alpha$ is aligned with $gap$.
-Thus, this pair contributes $w_{0}$.    
-The scoring scheme calculates as follows:
+Scoring scheme determines how to calculate the alignment score of two aligned sequences.
+If a pair of character in aligned sequences are matched (equal) then this pair contributes to the final alignment score $w_{+}$, if their mismatch it contributes $w_{0}$.
+If symbol $\alpha$ of one of the sequences is not aligned with any other symbol from another sequence it means that $\alpha$ is aligned with a $gap$.
+In this case, this pair contributes $w_{0}$.
+The final scoring scheme calculates as follows:
 \begin{equation}\label{formula:sa}
-\begin{aligned}
-    sa(a,b,w) = w_{+}k^{+} + w_{0}k^{0} + w_{-} (|a| + |b| - 2k^{+} - 2k^{0}) =\\
-    k^{+} (w_{+} - 2w_{-} ) + k^{0}  (w_{0} - 2w_{-}) + w_{-}(|a| + |b|)
-\end{aligned}
+\begin{array}{ll}
+    sa(a,b,w) &= w_{+}k^{+} + w_{0}k^{0} + w_{-} (|a| + |b| - 2k^{+} - 2k^{0}) \\
+    &= k^{+} (w_{+} - 2w_{-} ) + k^{0}  (w_{0} - 2w_{-}) + w_{-}(|a| + |b|)
+\end{array}
 \end{equation}
-The $k^{+}$ states for the number of matching symbols, $k^{-}$ --- mismatched symbols. 
+where $k^{+}$ stands for the number of matched symbols, $k^{-}$ --- the number of mismatched symbols.
+Note that \emph{LCS} is a special case of \emph{SA} with scoring scheme be $(1,0,0)$.
 
-Note that  \emph{LCS} is a special case of \emph{SA} when scoring scheme is $(1,0,0)$.
-
-Both described problems are solved by  classical dynamic programming algorithm and have running time complexity $O(|a||b|)$.
-$LCS$ and $SA$ allow you to find how much whole given strings are similar i/e how similar two string in a global sense.
-
-In many cases, this is not enogh.
-There also exist fully local version of these problems and semi-local one.
-The last one is in sight of this paper due to natural applicability to approximate pattern matching. 
-\subsection{Semi-local lcs}
-
-Given two strings $a$ and $b$ the semi-local lcs is asks about
-lcs scores for following:
-\begin{enumerate}
-\item \emph{string-substring}: whole $a$ against every substring of $b$
-\item \emph{substring-string}: whole $b$ against every substring of $a$
-\item \emph{prefix-suffix}: every prefix of $a$ against every suffix of $b$
-\item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$
-\end{enumerate} 
-
-
-The following \emph{semi-local lcs matrix} associated with the defined \emph{semi-local lcs}.
+Both described problems can be solved with usual dynamic programming algorithm having running time complexity $O(|a|\times|b|)$.
+$LCS$ and $SA$ allow one to find how much whole given strings are similar, i.e. how similar two string in a global sense.
+Sometimes this is not enough.
+There exist \emph{fully local} and \emph{semi-local} generalizations of these problems.
+In the paper, we focus on \emph{semi-local} ones due to natural applicability to approximate pattern matching.
+The key feature of semi-local problems is that they can be solved within the same time as global ones while collects more information about strings similarity.
+More precisely, given two strings $a$ and $b$ the semi-local lcs asks about $lcs$ scores for following:
+\begin{itemize}
+\item \emph{string-substring}: whole $a$ against every substring of $b$,
+\item \emph{substring-string}: whole $b$ against every substring of $a$,
+\item \emph{prefix-suffix}: every prefix of $a$ against every suffix of $b$,
+\item \emph{suffix-prefix}: every prefix of $b$ against every suffix of $a$.
+\end{itemize} 
+Formally, semi-local lcs can be defined via \emph{semi-local lcs matrix} as follows.
 \begin{definition}
-The \emph{semi-local lcs matrix}  $H_{a,b}$ for strings a,b defined as follows:
+The \emph{semi-local lcs matrix}  $H_{a,b}$ for strings $a$, $b$ defined as follows:
 \begin{equation}
-	H_{a,b}[i,j] = if (j\leq i) j-i  else lcs(a,b^{pad}[i,j]) 
+  H_{a,b}[i,j] = \textbf{ if } j\leq i \textbf{ then } j-i \textbf{ else } lcs(a,b^{pad}[i,j]) 
 \end{equation} 
-where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $ and $b^{pad}= ?^{|a|}b?^{|a|}$, $?$--- wildcard symbol that matches any other symbol.
+where $i \in [-|a|:|b|], j \in [0:|a|+|b|] $, $b^{pad}= ?^{|a|}\ b\ ?^{|a|}$, $?$--- wildcard symbol that matches any other symbol.
 \end{definition}
-The semi-local lcs matrix $H_{a,b}$ comprises from four
-quadrant associated with described  subproblems:
+The semi-local lcs matrix $H_{a,b}$ comprises from four quadrants associated with described subproblems:
 \begin{equation}
- H_{a,b} = \begin{bmatrix}
-H_{a,b}^{suf-pre} & H_{a,b}^{sub-str} \\
-H_{a,b}^{str-sub} & H_{a,b}^{pre-suf} 
-\end{bmatrix}    
+  H_{a,b} = \begin{bmatrix}
+    H_{a,b}^{suf-pre} & H_{a,b}^{sub-str} \\
+    H_{a,b}^{str-sub} & H_{a,b}^{pre-suf} 
+  \end{bmatrix}    
 \end{equation}
 
 \begin{definition}
 Matrix $H$ called (anti) Monge matrix if
 
 \begin{displaymath}
-H[i,j]+H[i^{'},j^{'}] (\geq)\leq H[i,j^{'}]+H[i^{'},j], \forall i<=i^{'}, j \leq j^{'}
+  \forall i,i',j,j':\ i\leq i^{'}, j \leq j^{'}\ .\ H[i,j]+H[i^{'},j^{'}] (\geq)\leq H[i,j^{'}]+H[i^{'},j]
 \end{displaymath}
 \end{definition}
 
