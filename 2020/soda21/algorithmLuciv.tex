@@ -33,7 +33,7 @@ If we set to $+\inf$ for elements that lie above the main diagonal that result m
 Thus, we can apply \emph{SMAWK} algorithm to this matrix to find a leftmost element that has a minimum in a given row with a corresponding column position.
 For our case leftmost means that for each prefix algorithm will detect longest suffix (remember that $M$ is transposed $H^{str-sub}_{p,t}$ ).
 
-The second step, it is one-way pass through these suffixes with a sliding window of size $\frac{|p|}{t}$ to find for each window most similar suffix with the longest length. Then the resulting set is filtered out that remaining suffixes have a score greater or equal to given threshold $-k_{di}$. 
+The second step, it is one-way pass through these suffixes with a sliding window of size $\frac{|p|}{t}$ to find for each window that have alignment score greater or equal to given threshold $-k_{di}$ with pattern $p$ most similar suffix with the longest length. 
 
 The third phase is the same as in \cite{luciv2019interactive} (Lines 8-12).  
 
@@ -147,44 +147,50 @@ Note that it possible to perform this phase in-place during a second phase which
 make the algorithm even faster i.e decrease space and time complexity to $O(|t|)$  and $O(|t|*|p|)$.
 The third phase is $O(|t| log|t|)$  at most both for space and running time complexity.
 
-Thus, the total running time is $max(O(tp),O(t \log t))$ and space complexity $t \log t$. \red{It be good if we also improve third phase)))}
+Thus, the total running time is $max(O(tp),O(t \log t))$ and space complexity $O(t \log t)$. \red{It be good if we also improve third phase)))}
 
 
 \begin{theorem}
-Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive}.
-
+Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive} with scoring scheme  $w = (0,-2,-1)$ and have running time and space complexity $max(O(tp),O(t \log t))$ and $O(t \log t)$  respectively.
 \end{theorem}
 
-First we show, equivalence between similarity functions, then we
-show that set $W_{2}$ from algorithm \ref{luciv} equals to set $W_{2}$ from algorithm \ref{alg:patternMathing1}.  
-Let be $A_1$ a set $W_{2}$ from algorithm \ref{luciv}.
-Let be $A_2$ a set $W_{2}$ from algorithm \ref{alg:patternMathing1}.
-We will show that $A_2 = A_1$.
+First, note  that \emph{edit distance} in algorithm \cite{.} may be expressed as sequence alignment  with following scoring scheme: 
+\begin{displaymath}
+w_{sa}=(w_{+},w_{0},w_{-}) = (0,-2,-1)
+\end{displaymath}
+Then to get intial $edit score$ we need to apply inverse operation:
+\begin{equation}\label{editsa}
+editscore(a,b) = -sa(a,b,w_{sa}) 
+\end{equation}
 
-\paragraph{First part}
-\red{Take from dimpla}
+Next, $w_{sa}$ may be normalized using normalization \ref{weightNormalization}:
+\begin{displaymath}
+(0, -2, -1) \rightarrow (1,\frac{\mu=0}{v=1}, 0)
+\end{displaymath}
+Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.
 
-
-\paragraph{Second part}
-
-At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragments which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
+Second, let's carefull review phases 1 and 2 of given algorithms.
+At first algorithm \ref{.} pass through text $t$ with sliding window to detect those fragments which has edit score above given threhsold $k_{di}$ with size $\frac{p}{k}$.
 Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size within  $pk...\frac{p}{k}$ interval.
-That how $A_1$ constucted.
+Algorithm \cite{.} proceeds in very similar but ,informally, phases are swapped.
+First, it detects longest suffixes with size in $pk...\frac{p}{k}$ interval for each prefix of text $t$.
+Then it proceeds in a such way that for each window of size $L_{w}$ the longest suffix is detected that have aligment score between current window and pattern $p$ below given threshold $-k_{di}$.
+Due to formula  \emph{editsa} the resulting set of second phases of two algorithms is equals.
+The third phase is unchaned in algorithm \cite{.}.
+Thus, algorithm \cite{}  preserves  completnessess property.
+For given $w = (0,-2,-1)$ we have $v=1$ then wehave running time as claimed.
 
-The second algorithm \ref{alg:patternMathing1} proceed in similar way but it first detects longest suffixes with size in $pk...\frac{p}{k}$ interval for each prefix of text $t$.
-Then it proceeds in a such way that for each window the longest suffix it detected that have similarity above given threshold $h$ for current window of size $\frac{p}{k}$ .
+
+%At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragments which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
+%Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size within  $pk...\frac{p}{k}$ interval.
+%That how $A_1$ constucted.
+%
+%T%he second algorithm \ref{alg:patternMathing1} proceed in similar way but it first .
+ .
 %$Then filtering is perfomed in that way that only$
-That how $A_1$ constucted.
+%That how $A_1$ constucted.
 %those lonh suffices  left 
  %for those windows of size $\frac{p}{k}$ the longest suffix is left.
 
-Thus, $A_1=A_2$  by resulting equivalence of construction. 
+%T%%hus, $A_1=A_2$  by resulting equivalence of construction. 
 
-
-
-  
-
-Note that set $A_{1}$ contains only those fragments of size $\frac{p}{k}$ from text $t$ that close enough to pattern $p$ i.e 
-
-The fragment from $W_{1}$ then shrunked.
-It means that after second phase set $W_{2}$ will have size  of $W_{1}$. 
