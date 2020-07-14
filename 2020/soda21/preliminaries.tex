@@ -215,20 +215,47 @@ For detalied description we refer readers to TISKIN BOOK\cite{}.
  
 \subsection{Range maximum/minimum queries}
 
+Range maximum/minimum queries (\emph{rmq}) (submatrix query)  refers to search maximum/minimum element in submatrix $[i_{1}:i{_2}]\times [j_{1}:j{_2}]$ of given matrix $M$ of size $n\times n$.
+The associated data strucutre that can report maximum/minimum element in any  submatrix query called \emph{range maximum/minimum data structure}.
 
-Defimition range queries
+For the generic case of Matrix $M$ it is not possible to
+achieve running time faster then $O(n^2)$ due to fact that storing matrix $M$ requires $O(n^2)$.
+
+Nonetheless, the situation is changed if we  consider special cases such as Monge matrices.
+%Monge matrices can  be (and often) stored implicilty.
+There have been several researches over several decades about 
+rmq on monge matrices \cite{}.
+
+The recent research achives following result\cite{}.
+
+\begin{theorem}\cite{}
+Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be constructed
+in $O(n \log n)$ time to answer submatrix maximum queries in $O(\log \log n)$ time when random access to Monge matrix is $O(1)$.
+\end{theorem}
 
 
-Say about range queries 
+\begin{theorem}\cite{}
+Given an $n \times n$ staircase\footnote{Defintion} Monge matrix $M$, a data structure of size $O(n)$ can be
+constructed in $O(n \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
+\end{theorem}
 
-Result in monge matrix rmq .(about soda12, soda14 and new result that we will be used)
+
+\begin{theorem}\cite{}
+Given an $n \times n$ partial Monge matrix\footnote{Definition} $M$, a data structure of size $O(n)$ can be
+constructed in $O(n \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
+\end{theorem}
+
+The above results applies both to range  minimum queries and to monge matrices with non-constant access $O(\beta)$ to queries.
+The latter one, costs in  increased construction time and query time by factor $\beta$. 
+
+  
+%\begin{definition}
+%Given  query of type $i_{1},i_{2},j_1,j_2, i_1,i_2 \in [0,]$
+%\end{definition}
+%\emph{rmq}  
 
 
-Thorerems  
 
-Definition partial monge matrix
-
-Thereom 
 
 
 \subsection{Near-duplicate detection algorithm}
@@ -269,5 +296,9 @@ Then, this phase requires $O(|t| \log |t|)$ time.
 
 Thus,the total time complexity of algirthms estimates as 
 $O(max(|t||p|^4,|t| \log|t|))$
+
+\begin{theorem}\cite{Luciv}
+Compltensess theorem
+\end{theorem}
 
 \red{Add luciv pseudocode}
