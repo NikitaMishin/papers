@@ -179,11 +179,11 @@ First, to get intial edit score we need to apply inverse operation:
 $$editscore(a,b) = -sa(a,b,w_{sa}).$$
 Next, $w_{sa}$ may be normalized using normalization~\ref{weightNormalization}:
 $$(0, -2, -1) \rightarrow (1,\frac{\mu=0}{v=1}, 0).$$
-\todo{equivalent? Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.}
+Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.
 
 Second, let's carefull review phases 1 and 2 of given algorithms.
 The base algorithm passes through the text with a sliding window to detect those fragments of size $L_{w}$ which have edit score above given threshold $k_{di}$.
-Then within these fragments algorithm detects longest suffixes that are most similar to pattern $p$ with size within interval \todo{$I=pk...L_{w}$}.
+Then within these fragments algorithm detects longest suffixes that are most similar to pattern $p$ with size within interval $I=[pk,\ L_{w}]$.
 The presented improved algorithm proceeds in a very similar way but, informally, phases are swapped.
 First, it detects the longest suffixes with size in interval $I$ for each prefix of the text.
 Then, it proceeds in such way that for each window of size $L_{w}$ that has alignment score with pattern $p$ below given threshold $-k_{di}$  the longest suffix most similar to $p$ is detected.
