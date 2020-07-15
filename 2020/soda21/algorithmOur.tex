@@ -4,6 +4,7 @@
 In the section we present several algorithms for approximate pattern mathing that heavily based on semi-local sequence alignment and it's underlying algebraic structure.
 The presented algorithms also support length constraints on the result (on detected clones).
 
+\todo{fix i,j,l,r,alpha,beta}
 The first algorithm~\ref{alg:appximateMatchingGreedy} implements an idea of the greedy choice of the most suitable clone on each step, i.e. it looks for the most similar substring with length in interval $[\alpha,\ \beta]$ each time for some predefined constants $\alpha$ and $\beta$.
 In other words, it constructs a non-intersected set $\Tau$ of clones of pattern $p$ in text $t$ such that on each step it adds $\tau_i$ to $\Tau$ iff $\tau_i$ has the highest similarity score with $p$ in the rest of the text and its length satisies the length constraint, i.e. $\alpha \leq |\tau_i| \leq \beta$.
 %% The first algorithm~\ref{alg:appximateMatchingGreedy} refers to following constraint.
@@ -84,21 +85,16 @@ $GreedyMathing(M,h,t)$
 
 
 \begin{theorem}
-Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in
-$O(max(|t||p|,\frac{|t| \log^2 |t|}{\log \log |t|} ))$ time and $O(|t| )$ space when $|p|<|t|$ where $p$ is pattern, $t$, is text and $v=O(1)$ is denominator of normalized mismatch score for semi-local sequence alignment
-$w_{normalized} = (1,\frac{\mu}{v},0)$.
+Algorithm~\ref{alg:appximateMatchingGreedy} runs in $O(max(|t||p|,\frac{|t| \log^2 |t|}{\log \log |t|} ))$ time and $O(|t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text, and $v=O(1)$ is denominator of normalized mismatch score for semi-local sequence alignment $w_{normalized} = (1,\frac{\mu}{v},0)$.
 \end{theorem}
 Note that $|p|<|t|$ and $v=O(1)$.
 For simplicity let $v=1$ (same true for other $v=O(1)$).
 
 \emph{First phase}. 
-We need to solve $semi-local lcs$ because $v=1$.
-It could be solved implicitly via algorithm from \cite{.}
-in $O(|t||p|)$ with $O(|t|)$ additional space when $O(|p|<|t|)$
-Note that we only interesting in string-substring submatrix $H^{str-sub}_{p,t}$ of size $|t| \times |t|$.
-Upon associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix ( Theorem \ref{decomposition})  we build data structure
-of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time to 
-perform  orthogonal range queries in $O(\frac{\log (|t|)}{\log \log (|t|)})$ time.
+Since $v=1$ we need to solve semi-local lcs problem.
+It could be solved implicitly via algorithm from~\cite{.} in $O(|t||p|)$ with $O(|t|)$ additional space when \todo{?}$O(|p|<|t|)$.
+Note, we are only interested in string-substring submatrix $H^{str-sub}_{p,t}$ of size \todo{O?}$|t| \times |t|$.
+\todo{Upon} associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix ( Theorem \ref{decomposition}) we build data structure of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time to perform  orthogonal range queries in $O(\frac{\log (|t|)}{\log \log (|t|)})$ time.
 
 Thus, the overall time and space complexity of first phase 
 is $max(O(|t|  \sqrt{\log(|t|))},O(|p||t|))$ and
