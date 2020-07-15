@@ -10,23 +10,23 @@ In other words, it constructs a non-intersected set $\Tau$ of clones of pattern 
 %% The first algorithm~\ref{alg:appximateMatchingGreedy} refers to following constraint.
 %% There should be found all non-intersected clones $\tau_{k}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $l \geq |\tau_{k}| \geq r$  i.e algorithm should perform greedy choice at each step with length constraint on $\tau_{k}$.
 %% This is a more intuitive approach i.e like looking for the most similar substring every time with length at least $l$ and at most $r$.
-Formally:\todo{check l and r}
-\begin{equation}
-   \Tau = \bigcup_{k} \tau_k = \bigcup_k \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, l \leq |t_{l,r}| \leq r ,t_{l,r} \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
-\end{equation}
+%% Formally:\todo{check l and r}
+%% \begin{equation}
+%%    \Tau = \bigcup_{k} \tau_k = \bigcup_k \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, l \leq |t_{l,r}| \leq r ,t_{l,r} \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
+%% \end{equation}
 
 The algorithm proceeds as follows.
 
 First, the semi-local sa problem is solved for given pattern $p$ and text $t$ (line 1).
 Then, the solution for the string-substring subproblem is queried from it (lines 2--3).
-Further, the diagonal slice of width $r-l$ which corresponds to scores of substrings of size in $[l,\ r]$ is cropped to get a partial Monge matrix (line 4) (\todo{see fig}).
+Further, the diagonal slice of width $r-l$ which corresponds to scores of substrings of size in $[l,\ r]$ is cropped to get a partial Monge matrix (line 4) (see Fig.~\ref{figures:M1}).
 Next, using Theorem~\ref{partialTheorem} a \emph{rmq2D} data structure is constructed (lines 5--6) which make it possible to perform range minimum queries.
 %% \todo{Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.}
 
-\begin{figure}[H]
+\begin{figure}[!t]
   \centering
     \includegraphics[width=0.4\columnwidth]{figures/M1.png}
-    \caption{\todo{.}}\label{figures:M2}
+    \caption{\todo{.}}\label{figures:M1}
 \end{figure}
 
 Then, algorithm calls recursive subroutine $greedy$ (algorithm \ref{alg:rec}).
@@ -39,7 +39,7 @@ Otherwise, the founded clone $\tau_k$ is added to the final result and the curre
 Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern $p$ in text $t$.
 
 
-\begin{algorithm}[H]
+\begin{algorithm}[!t]
 \caption{Greedy subroutine}
 \label{alg:rec}
 Input: $rmq2D$--- range maximum query data structure for performing range queries on Monge matrix $M$, $h$ --- threshold value, $i,j$ --- start and end positions of current text $t_{i,j}$, $l,r$--- length boundaries for detected intervals \\
@@ -66,7 +66,7 @@ $greedy(rmq2D,h, i, j, t_{i,j},l,r ):$
 \end{algorithm}
 
 
-\begin{algorithm}[H]
+\begin{algorithm}[!t]
 \caption{GREEDY-PATTERN BASED NEAR DUPLICATE
 SEARCH ALGORITHM}
 \label{alg:appximateMatchingGreedy}
