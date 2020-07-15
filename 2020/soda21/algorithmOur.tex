@@ -26,7 +26,7 @@ Next, using Theorem~\ref{partialTheorem} a \emph{rmq2D} data structure is constr
 \begin{figure}[!t]
   \centering
     \includegraphics[width=0.4\columnwidth]{figures/M1.png}
-    \caption{\todo{.}}\label{figures:M1}
+    \caption{The diagonal in matrix represent a set of substrings of text $t$ that have size in $[l,r]$ interval.}\label{figures:M1}
 \end{figure}
 
 Then, algorithm calls recursive subroutine $greedy$ (algorithm \ref{alg:rec}).
@@ -100,9 +100,9 @@ For simplicity let $v=1$ (same true for other $v=O(1)$).
 
 \emph{First phase}. 
 Since $v=1$ we need to solve semi-local lcs problem.
-It could be solved implicitly via algorithm from~\cite{.} in $O(|t| * |p|)$ with $O(|t|)$ additional space when $|p|<|t|$.
+It could be solved implicitly via algorithm from~\cite{tiskin2008semi} in $O(|t| * |p|)$ with $O(|t|)$ additional space when $|p|<|t|$.
 Note, we are only interested in string-substring submatrix $H^{str-sub}_{p,t}$ of size $|t| \times |t|$.
-By Theorem~\ref{decomposition} we build data structure of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time from associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix.
+By Theorem~\ref{decomposition} we build data structure of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time from associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix~\cite{chan2010counting}.
 The data structure performs orthogonal range queries in $O(\frac{\log (|t|)}{\log \log (|t|)})$ time.
 %% \todo{Upon} associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix ( Theorem \ref{decomposition}) we build data structure of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time to perform orthogonal range queries in $O(\frac{\log (|t|)}{\log \log (|t|)})$ time.
 Thus, the overall time and space complexity of first phase 
@@ -143,7 +143,7 @@ For each prefix of text $t$ we find the suffix that has the highest similarity s
 $$ a[j] = \max _{i \in 0 ..j} sa(p,t[i,j]), j \in 0..|t|.$$
 
 Further, we remove suffixes whose similarity score is below the given threshold $h$ (line 4).
-Then remaining suffixes are sorted in descending order (line 5) and an interval tree~\cite{.} is built upon them (lines 9--14).
+Then remaining suffixes are sorted in descending order (line 5) and an interval tree~\cite{pal2009interval} is built upon them (lines 9--14).
 The building process consists of checking that current substring $candidate$ not intersected with already added substrings to the $tree$ and adding it in case of success.
 Finally, algorithm outputs a set of non-intersected substrings (clones) of pattern $p$ in text $t$.
 

@@ -9,9 +9,9 @@ The utilization of semi-local sequence alignment algorithms in algorithm phases 
 It is also proved that the improved algorithm preserves all advantages of the initial one stated at~\cite{luciv2019interactive} such as search completeness.
 
 \subsection{Algorithm description}
-As the base one (see section~\ref{sec:lucivalgo} and~\ref{Luciv}), the presented algorithm consists of three sequential phases.
+As the base one (see section~\ref{sec:lucivalgo} and~\cite{luciv2019interactive}), the presented algorithm consists of three sequential phases.
 %Moreover, each step of the presented algorithm imitates the corresponding step of the base one.
-Aldorithm pseudocode is presented at Algorithm~\ref{alg:patternMathing1}.
+Algorithm pseudocode is presented at Algorithm~\ref{alg:patternMathing1}.
 % As the base one, the presented algorithm comprises three phases.
 
 At the first phase (lines 1-3) semi-local sa problem is solved for pattern $p$ against the whole text $t$.
@@ -28,13 +28,17 @@ The longest substring  most similar to pattern $p$ should be taken.
 it could be done by processing the diagonal 
 matrix $M$ with width $c:= \frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ (Fig. \ref{M2}).
 
-The third phase (lines 7--11) is the same as in the base algorithm.
+The third phase (lines 6--11) is the same as in the base algorithm.
 
  
 \begin{figure}
 	\centering
    \includegraphics[width=0.4\columnwidth]{figures/M2.png}
-   \caption{LOL}\label{M2}
+   \caption{An example of processing matrix $M$.
+   Here we goes from the end of the text. The width of diagonal is $\frac{|p|}{k} - |p|*k$.
+Diagonal represent a set of substrings  of size in interval $I$ in text $t$.
+Each triangular corresponds to sliding window in \cite{luciv2019interactive}.   
+   }\label{M2}
 \end{figure}
 
 
@@ -44,7 +48,7 @@ The third phase (lines 7--11) is the same as in the base algorithm.
 \caption{PATTERN BASED NEAR DUPLICATE
 SEARCH ALGORITHM VIA SEMI-LOCAL SA}
 \label{alg:patternMathing1}
-Input: pattern $p$, text $t$, similiarity measure $k \in  [ \frac{1}{\sqrt{3}} ,1  ]$\\
+Input: pattern $p$, text $t$, similiarity measure $k \in  ( \frac{1}{\sqrt{3}} ,1  ]$\\
 Output: Set of non-intersected clones of pattern $p$ in text $t$
 \begin{equation}
     k_{di}=|p|*(\frac{1}{k}+1)(1-k^2)
@@ -61,9 +65,9 @@ Pseudocode:
 \COMMENT{1st phase}
 \STATE{$H^{str-sub}_{p,t} = semilocalsa(p,t).stringSubstringMatrix$}
 \STATE{$M[j,i] = -H^{str-sub}_{p,t}[i,j]  $}
-\STATE{$sufixes = processDiagonal(M,L)$}
+\STATE{$lstW = queryWindows()$}
 \COMMENT{2d phase}
-\STATE{$W_2 = SuffixMaxForEachWindow(sufixes,L_{w})$}
+\STATE{$W_2 = processDiagonal()$}
 %% \STATE{$filter(W_2,k_{di})$}
 \STATE{ $W_3 = UNIQUE(W_2)$}
 \COMMENT{3rd phase unchanged}
@@ -88,7 +92,7 @@ The permutation matrix can be stored via two permutations of size $v*|t|$ for co
 It is simply two lists of size $v*|t|$.
 Then, for random access query in specific position $(i,j)$ of matrix $H$ one need to check how many points are dominated by $H [i,j]$.
 It can be done by checking all points of permutation matrix and requires $O(v * |t|)$ steps.
-Thus, the total time and space complexity of the first phase are $O(v *|p| * |t|)$ (time needed to solve semi-local sa) and $O(v*|t|)$ respectively.
+Thus, the total time and space complexity of the first phase are $O(v^2 *|p| * |t|)$ (time needed to solve semi-local sa) and $O(v*|t|)$ respectively.
 Given $v=O(1)$ we have $O(|p| * |t|)$ and $O(|t|)$ respectively.
 
 \emph{Second phase}.
@@ -97,7 +101,7 @@ For the sake of clarity, we omit $k$ factor in algorithm analysis since $k$ is j
 %We proceed diagonal M as follows (\ref{M2}).
 First, we query elements that lie in the diagonal that represent
 substrings of size $L_{w}=\frac{|p|}{k}$ (to step onto $(0,|p|/k)$ cell we need to perform one orthogonal range query).
-We denote them by $lstW$.
+We denote them by $lstW$ (line 4).
 Since we can use proposition~\ref{incremental} to access
 adjacent elements 
 the total complexity of this step is $O(|t|)$.
@@ -113,7 +117,7 @@ to check $longestForRow$.
 Thereby, we proceed as follows.
 We check that the current window meets criteria
 on similarity (it is just lookup to list $lstW$)
-If so, then we find maximal substring among all associated with the current window (triangle) by checking $O(|p|)$ elements of $longestForRow$ and save it to set $W_{2}$ as described above.
+If so, then we find maximal substring among all associated with the current window (triangle) by checking $O(|p|)$ elements of $longestForRow$ and save it to set $W_{2}$ as described above (line 5).
 
 Thus, the processing of each column of trapezia requires at most $O(|p|)$ time. The total amount of columns is $(|t|)$
 Total time complexity of this phase is $O(|t||p|)$.
@@ -132,7 +136,7 @@ Algorithm \ref{alg:patternMathing1} with scoring scheme $w = (0,-2,-1)$ preserve
 \end{theorem}
 
 \begin{proof}
-Edit distance in the base algorithm~\cite{.} may be expressed as sequence alignment with following scoring scheme: 
+Edit distance in the base algorithm~\cite{luciv2019interactive} may be expressed as sequence alignment with following scoring scheme: 
 $$w_{sa}=(w_{+},w_{0},w_{-}) = (0,-2,-1).$$
 
 First, to get intial edit score we need to apply inverse operation:
@@ -143,11 +147,12 @@ Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.
 
 Second, let's carefull review phases 1 and 2 of given algorithms.
 The base algorithm passes through the text with a sliding window to detect those fragments of size $L_{w}$ which have edit score above given threshold $k_{di}$.
-Then within these fragments algorithm detects longest suffixes that are most similar to pattern $p$ with size within interval $I=[pk,\ L_{w}]$.
+Then within these fragments algorithm detects longest substrings that are most similar to pattern $p$ with size within interval $I=[pk,\ L_{w}]$.
 The presented improved algorithm proceeds in a very similar way but, informally, phases are swapped.
-First, it detects the longest suffixes with size in interval $I$ for each prefix of the text.
-Then, it proceeds in such way that for each window of size $L_{w}$ that has alignment score with pattern $p$ below given threshold $-k_{di}$  the longest suffix most similar to $p$ is detected.
-Due to \todo{formula~\ref{editsa}} results of the second phases of the algorithms are equal.
+First, it detects the longest substrings with size in interval $I$ for each window of the text.
+Then, it proceeds in such way that for each window of size $L_{w}$ that has alignment score with pattern $p$ above given threshold $-k_{di}$  the longest substring most similar to $p$ is detected.
+Thus, the results of the second phases of the algorithms are equal.
+%Due to \todo{formula~\ref{editsa}} results of the second phases %of the algorithms are equal.
 The third phase remains unchaned in the presented algorithm.
 %% Thus, the presented algorithm preserves completeness.
 Thus, the presented algorithm is complete.

@@ -23,15 +23,15 @@ The major drawback of it that it shows only the global similarity for given inpu
 For many tasks, it's simply not enough.
 The approximate matching is an example of it.
 
-There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{} which overcome this constraint. 
-The effective theoretical solutions for this generalized problem found applications to various algorithmic problems \todo{such as bla bla add cited}.
-For example, there has been developed algorithm for approximate matching in the grammar-compresed strings~\cite{.}.
+There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{tiskin2008semi} which overcome this constraint. 
+The effective theoretical solutions for this generalized problem found applications to various algorithmic problems~\cite{tiskin2009periodic,tiskin2006longest,tiskin2011towards}.
+%For example, there has been developed algorithm for approximate matching in the grammar-compresed strings~\cite{.}.
 
 % research question Q1
 Although the algorithms for \emph{semi-local LCS} have good theoretical properties, there is unclear how they would behave in practice for a specific task and domain.
 % research question Q2
 To show the applicability of semi-local lcs on practice we developed several algorithms based mainly on it and the underlying algebraic structure.
-As well as developing new algorithms we improve the existing algorithm for duplicate detection in software documentationfrom~\cite{luciv2019interactive}.
+As well as developing new algorithms we improve the existing algorithm for duplicate detection in software documentation from~\cite{luciv2019interactive}.
 It should be noted that improvement preserves all properties of this algorithm.
 All presented algorithms also supports length constraints on the resulting substrings.
 Finally, we provided and proved running time and space complexity for all presented algorithms.
