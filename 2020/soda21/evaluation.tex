@@ -6,34 +6,32 @@ To present evaluation of algorithms we need to investigate the perfomance of alg
 It is justified by fact that all described algorithms heavily based on it.
 Thus, the following research questions have been settled by evaluation in this paper:
 \begin{enumerate}
-\item RQ1. Does both theoretical algorithms for solving \emph{semi-local} problem applicable in practice? (perform well on practice)
-\item RQ2. How differ in terms of running time computation of \emph{semi-local lcs} and \emph{prefix lcs}?
+\item[RQ1.] Does both theoretical algorithms for solving \emph{semi-local} problem applicable in practice? (perform well in practice)
+\item[RQ2.] How differ in terms of running time computation of \emph{semi-local lcs} and \emph{prefix lcs}?
 \end{enumerate}
 
-We had implemented algorithms and required data structures to answer RQ1 and RQ2 \footnote{add link to github}. Evaluation have been done in laptop machine with operation system \emph{Ubuntu18.04}  that have processor \emph{Intel-Core i5} with  \emph{16GB} RAM.
+We had implemented\footnote{add link to github} algorithms and required data structures to answer RQ1 and RQ2.
+Evaluation have been done in laptop machine with operation system \emph{Ubuntu18.04} with processor \emph{Intel-Core i5} and \emph{16GB} RAM.
 
 \paragraph{RQ1}
 
-On  fig. \ref{kb} the comparison between two algorithm for computing \emph{semi-local} lcs is presented.
+On  fig.~\ref{kb} the comparison between two algorithm for computing \emph{semi-local} lcs is presented.
 The plot marked as $recursive$ refers to the algorithm based on steady ant multiplication of associated sticky braids.
-The second one $reducing$ refers to algorithm that based on reducing the  associated unreduced sticky braid to reducing one.
+The second one $reducing$ refers to algorithm that based on reducing the associated unreduced sticky braid to reducing one.
 
-Although both algorithms have the same theoretical running time, 
-the figure completely shows that there are significant differences in practice.
+Although both algorithms have the same theoretical running time, the figure completely shows that there are significant differences in practice.
 The complex recursive structure of the algorithm by fast multiplication of sticky braids makes it inapplicable in practice for long input.
-Nonetheless, such complex stucture with combination of steady ant multiplication  indeed allows to get rid of one $v$ when computing \emph{semi-local sa} (see fix \ref{•}).
+Nonetheless, such complex stucture with combination of steady ant multiplication indeed allows to get rid of one $v$ when computing \emph{semi-local sa} (see \todo{fix~\ref{•}}).
 The recursive structure of multiplication itself is also a subject of required optimizations due to fact that it used in several theoretical algorithms.
 For example, in solution for \emph{Window substring} problem or \emph{Bounded Length Smith-Waterman alignment} (implicilty).  
 
 \paragraph{RQ2}
 
-On fig \ref{kb} the comparision between computing \emph{prefix lcs} and \emph{semi-local lcs} is presented.
-More preciesely, the comparison among computing prefix lcs via dynamic programing with explicit (denoted by \emph{prefix-lcs}) and implicit (denoted by \emph{light-prefix})  construction of 2D matrix and \emph{semi-local lcs} via reducing approach is presented.
-The fig \ref{t} show that computation of \emph{semi-local lcs} not only applicable to large input but also comparable with computing of simple \emph{prefix lcs}.
-The difference between speed computation is relatively subtle. 
+On fig~\ref{kb} the comparision between computing \emph{prefix lcs} and \emph{semi-local lcs} is presented.
+More preciesely, the comparison among computing prefix lcs via dynamic programing with explicit (denoted by \emph{prefix-lcs}) and implicit (denoted by \emph{light-prefix}) construction of 2D matrix and \emph{semi-local lcs} via reducing approach is presented.
+The fig~\ref{t} show that computation of \emph{semi-local lcs} not only applicable to large input but also comparable with computing of simple \emph{prefix lcs}.
+The difference between computation running times is relatively subtle. 
  
-
-
 %The following research questions have not been settled in this paper
 %and need further study:
 %\begin{enumerate}
