@@ -31,7 +31,7 @@ The algorithm is described in section~\ref{.} while the developed improved versi
 % Semi-local lcs and sa are extensions of \emph{lcs} and \emph{sa} problems, respectively.
 
 \begin{definition}
-Given two strings $a$ and $b$  the longest common subsequence (\emph{LCS}) problem ask for the maximal length of the longest common subsequence (\emph{lcs} score) of $a$ and $b$ ($lcs(a,b)$).
+Given two strings $a$ and $b$ the longest common subsequence problem \emph{(LCS)} ask for the maximal length of the longest common subsequence (\emph{lcs} score) of $a$ and $b$ ($lcs(a,b)$).
 \end{definition} 
 %\todo{In other words, \emph{LCS} problem asks about maximal %$lcs$ score of two given string $a$ and $b$ ($lcs(a,b)$)}.
 
@@ -52,7 +52,7 @@ The final scoring scheme calculates as follows:
 \end{equation}
 where $k^{+}$ stands for the number of matched symbols, $k^{-}$ --- the number of mismatched symbols.
 Note that \emph{LCS} is a special case of \emph{SA} with scoring scheme be $(1,0,0)$.
-Both described problems can be solved with usual dynamic programming algorithm having running time complexity $O(|a|\times|b|)$.
+Both described problems can be solved with usual dynamic programming algorithm having running time complexity $O(|a|*|b|)$.
 
 \subsection{Semi-local lcs}
 
@@ -84,7 +84,7 @@ The semi-local lcs matrix $H_{a,b}$ comprises from four quadrants associated wit
   \end{bmatrix}    
 \end{equation}
 
-Semi-local lcs can be solved within the optimal running time complexity, $O(|a| \times |b|)$, by a number of algorithms based, for example, on fast distance multiplication of unit-Monge matrices~\cite{.} or seaweed combing~\cite{.}.
+Semi-local lcs can be solved within the optimal running time complexity, $O(|a| * |b|)$, by a number of algorithms based, for example, on fast distance multiplication of unit-Monge matrices~\cite{.} or seaweed combing~\cite{.}.
 
 \subsection{Matrix properties}
 
@@ -194,7 +194,7 @@ Then to query initial score $sa$ for scoring scheme $w$ knowing $sa_{normalized}
 \end{equation}
 
 Finally, the blown-up technique\footnote{Each of the input length increases by factor $v$.} is applied after reducing the scoring scheme.
-At this stage, we have transitioned to semi-local lcs problem which can be solved in $O(|a| \times |b| \times v^2)$ time by algorithm from~\cite{.}.
+At this stage, we have transitioned to semi-local lcs problem which can be solved in $O(|a| * |b| * v^2)$ time by algorithm from~\cite{.}.
 Finally, unit-Monge matrix multiplication algorithm reduces time complexity in $v$ times\todo{~\cite{.}}.
 
 %\todo{Nonetheless, only one of the described algorithm time %complexity increases in $v^{2}$ times, the second one only $v$. %\red{Bad sentecnce}.
@@ -216,7 +216,7 @@ Nonetheless, it is not the case if considering Monge matrices which can be store
 The recent research provides the following results~\cite{.}.
 
 \begin{theorem}~\cite{.}
-Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n)$ time to answer submatrix maximum queries in $O(\log \log n)$ time when random access to Monge matrix is $O(1)$.
+Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be constructed in $O(n * \log n)$ time to answer submatrix maximum queries in $O(\log \log n)$ time when random access to Monge matrix is $O(1)$.
 \end{theorem}
 
 %\begin{theorem}~\cite{.}
@@ -230,7 +230,7 @@ $M$ becomes Monge and $\forall$ $i \in [0:m],j \in [0:n]$ $M[i,j]$
 can be queried in $O(1)$ 
 \end{lemma}
 \begin{theorem}~\cite{.}\label{partialTheorem}
-Given an $n \times n$ partial Monge matrix\footnote{A partial totally Monge matrix is a partial matrix whose defined entries satisfy the Monge property.} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
+Given an $n \times n$ partial Monge matrix\footnote{A partial totally Monge matrix is a partial matrix whose defined entries satisfy the Monge property.} $M$, a data structure of size $O(n)$ can be constructed in $O(n * \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
 \end{theorem}
 
 If the random access to Monge matrix is non-constant, say $O(\beta)$, then the results above are satisfied with time construction and query times increased by factor $\beta$.
@@ -304,7 +304,7 @@ Pseudocode:
 
 \paragraph{Running time analysis}
 At first phase at most $O(|t|-\frac{|p|}{k})=O(|t|)$ windows of size $L_{w}$ will be processed.
-Since edit distance running time complexity is $O(|p|^2)$, the overall time complexity of the first phase is $O(|t| \times |p|^2)$.
+Since edit distance running time complexity is $O(|p|^2)$, the overall time complexity of the first phase is $O(|t| * |p|^2)$.
 Note, cardinality of set $W_{1}$ could be meaused as $O(|t|)$ at worst case.
 Thus, the the first loop of the second phase will be iterated over $O(|t|)$ times (line 8).
 The second loop (line 10) refers to iteration over set $I$ with cardinality $O(\frac{|p|}{k}-|p|k) = O(|p|)$.
@@ -312,9 +312,9 @@ The third loop (line 11) requires at most $O(|p|)$ iterations since again a slid
 The running time complexity of \emph{Compare} operation (line 12) is at most $O(|p|^2)$ since both strings are of size $O(|p|)$.
 Thus, the total running time complexity of the second phase can be estimated as $O(|p|^4|t|)$ at worst case.
 Note, cardinality of set $W_{2}$ is equal to $W_{1}$ and thus at worst case is $O(|t|)$.
-Finally, the third phase requires $O(|t| \times \log |t|)$ time.
+Finally, the third phase requires $O(|t| * \log |t|)$ time.
 Thus, the total time complexity of the algirthm can be estimated as
-$O(max(|t| \times |p|^4, |t| \times \log|t|))$.
+$O(max(|t| * |p|^4, |t| * \log|t|))$.
 
 The algorithm also possesses completeness property.
 To detailed description refer to~\cite{.}.
