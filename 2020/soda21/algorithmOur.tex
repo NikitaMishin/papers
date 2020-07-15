@@ -23,6 +23,12 @@ Further, the diagonal slice of width $r-l$ which corresponds to scores of substr
 Next, using Theorem~\ref{partialTheorem} a \emph{rmq2D} data structure is constructed (lines 5--6) which make it possible to perform range minimum queries.
 %% \todo{Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.}
 
+\begin{figure}[H]
+  \centering
+    \includegraphics[width=0.4\columnwidth]{figures/M1.png}
+    \caption{Диагfрамма компонентов системы}\label{figures:M2}
+\end{figure}
+
 Then, algorithm calls recursive subroutine $greedy$ (algorithm \ref{alg:rec}).
 The $greedy$ routine performs greedy choice of $\tau_{k}$ with maximal alignment within a continious uncovered part of the text $t_{i,j}$ with length boundaries for $\tau_{k}$ in $[l,\ r]$ where $t_{i,j}$ denotes a substing of text $t$ starting at $i$-th element and ending at $j$-th element.
 More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within $t_{i,j}$.
