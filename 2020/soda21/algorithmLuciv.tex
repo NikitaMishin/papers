@@ -116,26 +116,26 @@ We will use the first approach described in the algorithm description for this p
 First, although the random access query to a matrix element requires $O(|t|)$.
 We only need one such query to step on the diagonal.
 Precisely, to the cell that represents substring $t_{0,|p|*k}$, starting at zero position and ending in $|p|*k$ position.  
-Further we use \red{Theorem about adjacent cell query} that allows us to perform $O(1)$ access to adjacent elements for given $i,j$ cell in matrix $M$.
+Further we use  proposition \ref{incremental} that allows us to perform $O(1)$ access to adjacent elements for given $i,j$ cell in matrix $M$.
 Thus, we can visit each cell in the desired diagonal of size at most $O(|t|) * O(|p|) $ in $O(|t|*|p|)$ time in the following way.
 Process row $i^{'}$ with starting $j^{'}$ (recall it cell by $M[i^{'},j^{'}]$) position  (go right i.e increment $j^{'}$) until $i^{'}-j \geq |p|*k$.
 Then shift by one $i^{'}$ down and $j^{'}$ to right by one if needed (see picture \red{This about the top left corner}).
 
-When we pass through a slice of the specific column, we also will find the longest suffix with the highest similarity simply by checking elements twice.
+When we pass through a slice of the specific row in diagonal $M$,  we also will find the longest suffix with the highest similarity simply by checking elements twice.
 First for detect maximum score, second for detect the longest suffix among those who have this score.
 %It requires storing at most $O(p)$ cells for each column but we only process one column at the time, thus, we will require only $O(p)$ additional space for that whole cell processing.
 Thus, for storing for each prefix its longest suffix we need additionally $O(|t|)$ space.
 Also for each substring of length $\frac{p}{k}$ we store similarity score by querying them during diagonal passage because they lie also on this diagonal.
 Let's denote it by $C$. 
-At the end of  $processDiagonal$ we will have $O(t)$ suffixes that require $O(t)$  space for storing them.
+At the end of  $processDiagonal$ we will have $O(t)$ suffixes that requires $O(t)$  space for storing them.
 Then, $processDiagonal$ requires $O(|t|+|t|*|p|)=O(|t|*|p|)$ time for processing diagonal with $O(|t|+|p|)=O(|t|)$ additional space.
  
-Further (Line 5), we need to find longest suffix within $O(|p|)$ window with step one in list of size $|t|$ with additional condition that within each window of size $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ the suffix with length $\frac{p}{k}$ have similarity score at least $-k_{di}$.
+Further (Line 5), we need to find longest suffix within $O(|p|)$ window with step one in applied  to list of size $|t|$ with additional condition that within each window of size $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ the suffix with length $L_{w}$ have similarity score at least $-k_{di}$.
 It is simply a one-way pass-through list of suffixes where the processing of each window requires at most $O(|p|+1)=O(|p|)$.
 More precisely, first, we check that for current window of size $O(|p|)$
-associated suffix has similarity not less then given threshold $k_{di}$.
+associated suffix of size $L_{w}$ has similarity not less then given threshold $k_{di}$.
 It is simply lookup for a specific element in $C$ with $O(1)$.
-If that true, then we need $O(p)$ lookups within $suffixes$ to query the most similar and longest one.    
+If that true, then we need $O(|p|)$ lookups within $suffixes$ to query the most similar and longest one.    
 The total number of such windows at most $O(|t|)$.
 Thus, $SuffixMaxForEachWindow$ requires $O(|t|)*O(|p|)=O(|t|*|p|)$ time with $O(|t|)$ space for storing suffix for each window. 
 

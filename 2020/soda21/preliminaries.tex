@@ -151,7 +151,7 @@ It allows to store $H_{a,b}$ implicitly and query any element of $H_{a,b}$ via d
 Thus, there are several ways to store matrix $H_{a,b}$ or one of its quadrants implicitly.
 A simple storing of two lists of permutations requires $O(|a|+|b|)$ space and time providing $O(|a|+|b|)$ orthogonal range query time complexity (since it is necessary to check how many points dominated by given point), whereas more sophisticated approach requires $O(|a|+|b|)$ space with $O( (|a|+|b|) \sqrt{\log{ (|a| +|b|)} } )$ preprocessing time and allows to query any point of $H$ in $O(\frac{\log (|a|+|b|)}{\log \log (|a|+|b|)})$ time.  
 Moreover, while arbitrary query has a non-constant time complexity, the following proposition stands that adjacent matrix elements can be queried within a constant time~\cite{.}.
-\begin{proposition}
+\begin{proposition}\label{incremental}
   Given a permutation matrix $P$ and a value $P^{\nearrow}[i; j]$,
   values $P^{\nearrow}[i +- 1; j], P^{\nearrow}[i; j +- 1]$, where they exist,
   can be queried in time $O(1)$.
