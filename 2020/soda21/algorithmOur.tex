@@ -1,5 +1,6 @@
 \section{CutMax a new approximate mathing algorithm}
 \label{section:our}
+\red{Say about extension???}
 We now describe several algorithms that heavily based on \emph{semi-local sa} and it's underlying algebraic structure.
 
 The first algorithm \ref{alg:appximateMatchingGreedy} refers to following constraint.
@@ -11,26 +12,26 @@ This is a more intuitive approach i.e like looking for the most similar substrin
 \end{equation}
 
 The algorithm proceeds as follows.
-First, the \emph{semi-local sa} problem is solved for given pattern $p$ and text $t$ (Line 1).
-Then, solution for string-substring subproblem is queried from it (Line 2).
-Further the diagonal slice of width $r-l$ that corresponds to
-scores of substrings of size in $[l:r]$ is croped in order to get staircase anti Monge Matrix (Line 3).
-Upon starircase matrix $-M_{staircase}$ is built full monge Matrix $M$. 
-Then, \emph{rmq} data structure is built  for perfoming range minimum queries on $M$.
 
-Second, algorthm make recursive call to subroutine $greedy$.
-The $greedy$ routine perfoms greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$ with legnth boundaries for $\tau_{i}$ in $[l:r]$.
+First, the \emph{semi-local sa} problem is solved for given pattern $p$ and text $t$ (Line 1).
+Then, the solution for the string-substring subproblem is queried from it (Lines 2-3).
+Further the diagonal slice of width $r-l$ that corresponds to
+scores of substrings of size in $[l:r]$ is cropped to get partial Monge Matrix (Line 3) (see fig).
+Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.
+
+Second, algorithm makes recursive call to subroutine $greedy$(algorithm \ref{alg:rec}).
+The $greedy$ routine performs greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$ with length boundaries for $\tau_{i}$ in $[l:r]$.
 More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within  $t_{i,j}$ (starting at $i$th position and ending at $j$th position of text $t$.
 It is solved via range queries.
 When detected $interval$ has alignment score less then threshold it means that no clones of pattern $p$ are presented in this part of text $t_{i,j}$, and further processing should be skipped.
-Otherwise, the founded clone is added to final result and the current part of the text splits on two smaller parts and processed in the same way.
-Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern p in text t.
+Otherwise, the founded clone is added to the final result and the current part of the text splits into two smaller parts and processed in the same way.
+Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern $p$ in text $t$.
 
 
 \begin{algorithm}[H]
 \caption{Greedy subroutine}
 \label{alg:rec}
-Input: $rmq2D$--- range maximum query data structure for perfoming range queries on monge matrix $M$, $h$ --- theshold value, $i,j$ --- start and end positions of current text $t_{i,j}$, $l,r$--- length boundaries for detected intervals \\
+Input: $rmq2D$--- range maximum query data structure for performing range queries on Monge matrix $M$, $h$ --- threshold value, $i,j$ --- start and end positions of current text $t_{i,j}$, $l,r$--- length boundaries for detected intervals \\
 Output: Set of non-intersected intervals from $t_{i,j}$\\
 Pseudocode:\\
 $greedy(rmq2D,h, i, j, t_{i,j},l,r ):$
@@ -58,17 +59,22 @@ $greedy(rmq2D,h, i, j, t_{i,j},l,r ):$
 \caption{GREEDY-PATTERN BASED NEAR DUPLICATE
 SEARCH ALGORITHM}
 \label{alg:appximateMatchingGreedy}
-Input: pattern $p$ and text $t$, theshold value $h$\\
+Input: pattern $p$ and text $t$, threshold value $h$\\
 Output: Set of non-intersected clones of pattern $p$ in text $t$\\
 Pseudocode:\\
 $GreedyMathing(M,h,t)$
 \begin{algorithmic}[1]
 \STATE{$sa = semilocalsa(a,b)$}
-\STATE{$H = sa.getStringSubstringMatrix()$}
-\STATE{$M_{staircase} = getStaircaseMatrix(H,l,r)$}
-\STATE{$M = builtMongeMatrix(-M_{staircase})$}
+\COMMENT{1st phase}
+\STATE{$H = sa.getAssociatedMatrix()$}
+\STATE{$H^{str-sub} = H.stringSubstringMatrix()$}
+\STATE{$M_{partial} = -getPartialMatrix(H^{str-sub},l,r)$}
+\COMMENT{2nd phase}
+\STATE{$M = builtMongeMatrix(M_{partial})$}
+
 \STATE{$rmq2D = buildRMQStructure(M) $}
 \STATE{$result = greedy(rmq2D,h,0,|t|,t,l,r)$}
+\COMMENT{3rd phase}
 \RETURN $result$
 \end{algorithmic}
 \end{algorithm}
@@ -76,53 +82,54 @@ $GreedyMathing(M,h,t)$
 
 \begin{theorem}
 Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in
-$O(max(|t||p||v|,\frac{|t| \log^2 |t|}{\log \log |t|} ))$ time and $O(|t|v \log )$ space.
-$\max ( O(|p| * |t| * v), O(|t| * \log |t|))$ time with $ O(|t| \log |t|)$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
+$O(max(|t||p|,\frac{|t| \log^2 |t|}{\log \log |t|} ))$ time and $O(|t| )$ space when $|p|<|t|$ where $p$ is pattern, $t$, is text and $v=O(1)$ is denominator of normalized mismatch score for semi-local sequence alignment
 $w_{normalized} = (1,\frac{\mu}{v},0)$.
 \end{theorem}
+Note that $|p|<|t|$ and $v=O(1)$.
+For simplicity let $v=1$ (same true for other $v=O(1)$).
 
-The \emph{semi-local sa} requires $O(|t||p||v|)$ time \ref{.}.
-We will store solution of \emph{semi-local sa} implicitly via sophisticated data structure from \cite{}.
-We have $O(|t|v+|p|v) = O(|t|v)$ points to preprocess.
-Then the data stucture of size $O(|t||v|)$ can be built in
-$O(v|t|  \sqrt{\log(|t|v))}$ time to anwer orthogonal range queries in $O(\frac{\log (v|t|)}{\log \log (v|t|)})$ time.
-Thus, any element of matrix can be queried in
-$O(\frac{\log (v|t|)}{\log \log (v|t|)})$.   
+\emph{First phase}. 
+We need to solve $semi-local lcs$ because $v=1$.
+It could be solved implicitly via algorithm from \cite{.}
+in $O(|t||p|)$ with $O(|t|)$ additional space when $O(|p|<|t|)$
+Note that we only interesting in string-substring submatrix $H^{str-sub}_{p,t}$ of size $|t| \times |t|$.
+Upon associated permutation matrix with $H^{str-sub}_{p,t}$ anti-Monge matrix ( Theorem \ref{decomposition})  we build data structure
+of size $O(|t|)$ in $O(|t|\sqrt{\log(|t|))}$ time to 
+perform  orthogonal range queries in $O(\frac{\log (|t|)}{\log \log (|t|)})$ time.
 
-Lines (2-3) is just an slice of indices and  made inplace.
-Lines (4-5) corresponds to THREOREMABOUTSTAIRVASE and requires 
-where $q$--- time access of matrix element.
-We will use these data structure with the difference that we return indexed of  minimum element along with element itself. 
-Then the data structure of size $O(|t|)$ can be built in time $O(|t|\log |t|) * O(\frac{\log (v|t|)}{\log \log (v|t|)}))=
-O(\frac{|t|\log |t| \log (v|t|)}{\log \log (v|t|)})
-$ to answer
-rmq queries in $O(\log \log |t|)*O(\frac{\log (v|t|)}{\log \log (v|t|)}))=O(\frac{\log \log |t| * \log (v|t|)}{\log \log (v|t|))})$.
+Thus, the overall time and space complexity of first phase 
+is $max(O(|t|  \sqrt{\log(|t|))},O(|p||t|))$ and
+$O(|t|)$ respectively.
 
+\emph{Second phase}.
+In string-substring matrix $H^{str-sub}_{p,t}$ we only interesting in diagonal of length $r-l$ that refers to all substrings of text $t$ with length in $[l:r]$ interval. 
+If we apply to  $H^{str-sub}_{p,t}$ inverse operation and cut this diagonal we will have partial Monge matrix $M_{partial}$.
+Then we apply theorem  \ref{partialTheorem} to build 
+\emph{rmq2D} data structure to perform minimum range queries.
+Note that we have non-constant access to the element in $M_{partial}$ and we will return not the element itself but also associated indices of it.
+Thus, the data structure of size 
+$O(|t|)$
+ can be built in $O(|t| \log |t|)* O(\frac{\log (|t|)}{\log \log (|t|)}) = O(\frac{|t|\log^2 |t|}{\log \log (|t|)}) $ time
+to perform range minimum queries in $O(\log \log (|t|))*O(\frac{\log (|t|)}{\log \log (|t|)})=O(\log |t|)$ time.
 
-The first phase of algorithm requires $O(|p| * |t| * v)$ with $O(|t| * v)$ additional space for stroring monge matrix implicitly.
-We denote this matrix, specifically it's lower-left quadrant that refers to
-string-substring solution as $M$ with size $|t| \times |t|$.
-
-
-  Theorema 3.4
-First, note that 
-
-Building structure for rmq queries for staircase matrix requires 
-Theorem 5.8. Given an n $\times$ n partial Monge matrix M, a data structure of size O(n) can be con-
-structed in O(n logn) time to answer submatrix maximum queries in O(log logn) time.
-   
-
-\red{Proof it}
-\begin{displaymath}
-    D = \diag(d_1,\dots,d_n)
-  \end{displaymath}
+Then, overall time and space complexity of second phase is 
+$O(|t| \log^2 |t|)$ and
+$O(|t|)$
+respectively.
 
 
-\begin{corollary}
-Algorithm \ref{alg:appximateMatchingGreedy} could  be solved in 
-$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
+\emph{Third phase}
 
-\end{corollary}
+To analyze the third phase we need to look at the recursive algorithm \ref{alg:rec}.
+Note that at the worst case we will have $O(|t|)$ nodes while proceeded recursion due to fact that at the worst case on each node we will detect interval of size 1.
+Such non-intersected intervals will be at most $t$.
+Thus, the total amount of calls to $query$ operation will be at most 
+$O(|t|)$.
+The query operation requires $O(\log |t|)$ as shown in the previous phase.
+Thus, the total running time and space complexity of third phase is 
+$O(|t| |\log t|)$ and $O(|t|)$  
+
+Then, overall algorithm running time and space complexity is as claimed when $v=O(1)$ and $|p|<|t|$.
 
 
 
