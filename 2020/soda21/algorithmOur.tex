@@ -18,8 +18,16 @@ The algorithm proceeds as follows.
 
 First, the semi-local sa problem is solved for given pattern $p$ and text $t$ (line 1).
 Then, the solution for the string-substring subproblem is queried from it (lines 2--3).
-Further, the diagonal slice of width $\beta-\alpha$ which corresponds to scores of substrings of size in $[\alpha,\ \beta]$ is cropped to get a partial Monge matrix (line 4) (\todo{see fig}).
+Further, the diagonal slice of width $\beta-\alpha$ which corresponds to scores of substrings of size in $[\alpha,\ \beta]$ is cropped to get a partial Monge matrix (line 4) (\ref{figures:M2}).
 \todo{Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.}
+
+
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=0.4\columnwidth]{figures/M1.png}
+    \caption{Диагfрамма компонентов системы}\label{figures:M2}
+\end{figure}
 
 Then, algorithm calls recursive subroutine $greedy$ (algorithm \ref{alg:rec}).
 The $greedy$ routine performs greedy choice of $\tau_{k}$ with maximal alignment within a continious uncovered part of the text $t_{i,j}$ with length boundaries for $\tau_{k}$ in $[\alpha:\beta]$ where $t_{i,j}$ denotes a substing of text $t$ starting at $i$-th element and ending at $j$-th element.
