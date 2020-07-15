@@ -2,43 +2,41 @@
 % approximate string matching: many areas
 Approximate string matching is an important task in many fields such as computational biology, signal processing, text retrieval and etc.
 It also refers to a duplicate detection subtask.
-
 % basic formulation of approximate matching
-In general form it formulates as follows: Given some pattern $p$ and text $t$ need to find all occurrences of pattern $p$ in text $t$ with some degree of similarity.
+In general form it is formulated as follows: given some pattern $p$ and text $t$ need to find all occurrences of pattern $p$ in text $t$ with some degree of similarity.
 
 % short overview what constarins could be
-There are many algorithms that solve the above problem.
-Nonetheless, the number of algorithms sharply decreases  when the algorithm needs to meet some specific requirements imposed by running time, space complexity or specific criterion for the algorithm itself.
+There exists a lot of algorithms that solve the above problem.
+Nonetheless, the number of suitable algorithms sharply decreases when the algorithm needs to meet some specific requirements imposed by running time, space complexity or specific criterion for the algorithm itself.
 For example, recently there was developed an approach for interactive duplicate detection for software documentation~\cite{luciv2019interactive}.
-The core of this approach is an algorithm that detects approximate clones of a given user pattern with a specified degree of similarity. 
-The main advantage of the algorithm is that it meets a specific requirement of completeness.
-Nonetheless, it has an unpleasant time complexity.    
+The core of this approach is an algorithm that detects approximate clones of a given user pattern with a specified degree of similarity.
+The main advantages of the algorithm are that it meets a specific requirement of completeness and it supports length constraints on the resulting substrings.
+The last is useful in a number of tasks since it allows to speeds up the algorithm running time by ignoring unpleasant results by algorithms design itself instead of post-processing the results.
+In the paper, we focus on algorithms that support such constraints.
+Nonetheless, the algorithm from~\cite{luciv2019interactive} has unpleasant time complexity.
 
-
-The algorithm for approximate detection utilizes mainly algorithm for solving the longest commons subsequence (\emph{LCS}) problem.
+A lot of algorithms for approximate detection utilize algorithms for solving the longest commons subsequence (\emph{LCS}) problem.
 The longest common subsequence is a well-known fundamental problem in computer science that also has many applications of its own.
 The major drawback of it that it shows only the global similarity for given input strings.
 For many tasks, it's simply not enough.
 The approximate matching is an example of it.
 
 There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{} which overcome this constraint. 
-The effective theoretical solutions for this generalized problem found applications to various algorithmic problems \red{such as bla bla add cited}.
-For example, there has been developed algorithm for approximate matching in the grammar-compresed strings\cite{}.
+The effective theoretical solutions for this generalized problem found applications to various algorithmic problems \todo{such as bla bla add cited}.
+For example, there has been developed algorithm for approximate matching in the grammar-compresed strings~\cite{.}.
 
 % research question Q1
 Although the algorithms for \emph{semi-local LCS} have good theoretical properties, there is unclear how they would behave in practice for a specific task and domain.
-
 % research question Q2
 To show the applicability of semi-local lcs on practice we developed several algorithms based mainly on it and the underlying algebraic structure.
-As well as developing new algorithms we improve and significantly outperform the existing one for interactive duplicate detection for software documentation ~\cite{}.
+As well as developing new algorithms we improve the existing algorithm for duplicate detection in software documentationfrom~\cite{luciv2019interactive}.
 It should be noted that improvement preserves all properties of this algorithm.
-\red{Do we need to state that ant algo is slow for current strucute of algorithm} 
+All presented algorithms also supports length constraints on the resulting substrings.
+Finally, we provided and proved running time and space complexity for all presented algorithms.
 
-
-
-The paper is organized as follows.
-Blablabla
-\cref{sec:main}, our new algorithm is in \cref{sec:alg}, experimental
-results are in \cref{sec:experiments}, and the conclusions follow in
-\cref{sec:conclusions}.
+%% The paper is organized as follows.
+%% Blablabla
+%% \cref{sec:main}, our new algorithm is in \cref{sec:alg}, experimental
+%% results are in \cref{sec:experiments}, and the conclusions follow in
+%% \cref{sec:conclusions}.
 
