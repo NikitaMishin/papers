@@ -146,7 +146,11 @@ The example dominance sum matrix:
 \end{equation}
 
 In~\cite{tiskin} is proved that $H_{a,b}$ is unit anti Monge.
-Also, it is proved that this matrix may be decomposed to permutation matrix, i.e into a \emph{cross-difference} matrix.
+Also, it is proved that this matrix may be decomposed to permutation matrix, i.e into a \emph{cross-difference} matrix:
+\begin{theorem}\cite{}\label{decomposition}
+Let $A[0:m,0:n]$ be a Monge Matrix. Let $D^{\square}$, $b=A[m::]$ and $c=A[::,0]$ then following is true $\forall i \in [0:m],j\in [0:n]$:
+$$ A[i,j] = D^{\nearrow}[i,j]+b[j]+c[i]-b[0] $$ 
+\end{theorem}
 It allows to store $H_{a,b}$ implicitly and query any element of $H_{a,b}$ via dominance sum query (orthogonal range queries).
 Thus, there are several ways to store matrix $H_{a,b}$ or one of its quadrants implicitly.
 A simple storing of two lists of permutations requires $O(|a|+|b|)$ space and time providing $O(|a|+|b|)$ orthogonal range query time complexity (since it is necessary to check how many points dominated by given point), whereas more sophisticated approach requires $O(|a|+|b|)$ space with $O( (|a|+|b|) \sqrt{\log{ (|a| +|b|)} } )$ preprocessing time and allows to query any point of $H$ in $O(\frac{\log (|a|+|b|)}{\log \log (|a|+|b|)})$ time.  
