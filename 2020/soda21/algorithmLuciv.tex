@@ -31,27 +31,12 @@ matrix $M$ with width $c:= \frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ (Fig. \
 The third phase (lines 7--11) is the same as in the base algorithm.
 
  
-%First, we want to get for each prefix of the text $t$ the %longest suffix that has the highest similarity with the given %pattern $p$ with the following constraint.
-%The lengths of obtained suffixes should be in $[|p|*k..\frac{|%p|}{k}]$ interval where $k \in (\frac{1}{\sqrt{3}},1]$.
-%It could be done in several ways.%
-%For example, direct pass through diagonal with width $w:= %\frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ in $H^{str-sub}_{p,t}$ or in $M$ (Fig. \ref{fig:M2}).
-%Another approach is the following.
-%Note, $M$ is a Monge matrix where indices are swapped with respect to matrix $H^{str-sub}$.
-%Thus, diagonal can be covered, with 1 step discreteness, by %approximately $ | t | $ square windows of size $ w \times w $.
-%Because of length constraint, we are only interested in elements %that lie in the main diagonal and below it (remember, t%ransposition) in these submatrices $w\times w$.
-%Each of these submatrices is Monge by definition, as a submatrix %of a Monge matrix.
-%Hence, $W$ is totally monotone.
-%Moreover, determining all elements lying above the main diagonal %to be $+\inf$ preserves total monotonicity.
-%Thus, the \textrm{SMAWK} algorithm\cite{.} can be applied to %this matrix in order to find a leftmost element that has a %minimum in a given row with the corresponding column position.
-%In our case, leftmost means that for each prefix algorithm %detects the longest suffix.
-
 \begin{figure}
 	\centering
    \includegraphics[width=0.4\columnwidth]{figures/M2.png}
    \caption{LOL}\label{M2}
 \end{figure}
 
-%The second step, it is one-way pass through these suffixes with a sliding window of size $\frac{|p|}{t}$ to find for each window that has alignment score greater or equal to given threshold $-k_{di}$ with pattern $p$ most similar suffix with the longest length. 
 
 
 
@@ -111,52 +96,28 @@ For the sake of clarity, we omit $k$ factor in algorithm analysis since $k$ is j
 
 %We proceed diagonal M as follows (\ref{M2}).
 First, we query elements that lie in the diagonal that represent
-substrings of size $L_{w}=\frac{|p|}{k}$.
-Since we can use proposition~\ref{incremental}
-The total complexity of this step is $O(|t|)$.
+substrings of size $L_{w}=\frac{|p|}{k}$ (to step onto $(0,|p|/k)$ cell we need to perform one orthogonal range query).
+We denote them by $lstW$.
+Since we can use proposition~\ref{incremental} to access
+adjacent elements 
+the total complexity of this step is $O(|t|)$.
 The total amount of querying cells is $O(|t|)$. 
 Second, we again process matrix M.
-More precisely, we process the diagonal of width $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ that corresponds to all substrings with size in  $I=[|p|*k:\frac{|p|}{k}]$ interval (on Fig. \ref{M2} it is  trapezoid). 
+More precisely, we process the diagonal of width $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ that corresponds to all substrings with size in  $I=[|p|*k, \frac{|p|}{k}]$ interval (on Fig. \ref{M2} it is  trapezoid).
+Note, that the bold triangle in Fig  \ref{M2} corresponds to the set of substrings with sizes in the interval $I$ that contains in the last substring with size $L_{w}$ of text $t$.
+During processing each triangle we  additionally store list $longestForRow$ of size $\frac{|p|}{k}-|p|k$ that contains
+for each row (represent prefix) the suffix that is most similar to pattern $p$ for given window (triangle on Fig. \ref{M2}).
+This list updated every time when we shift triangle by one symbol step ($(x,y)\rightarrow (x-1,y-1)$).
+Thus, to get the longest substring that most similar to pattern $p$ for the given window we simply need
+to check $longestForRow$. 
+Thereby, we proceed as follows.
+We check that the current window meets criteria
+on similarity (it is just lookup to list $lstW$)
+If so, then we find maximal substring among all associated with the current window (triangle) by checking $O(|p|)$ elements of $longestForRow$ and save it to set $W_{2}$ as described above.
 
-%In the proof, we follow the first approach described in the algorithm description for this phase.
-First, we need to access the cell that represents substring $t_{0,|p|*k}$.
-Note, such a random access query to a matrix element requires $O(|t|)$ time.
-Further, by  proposition~\ref{incremental} we access adjacent elements for given cell $M[i,j]$ by $O(1)$.
-Thus, we can traverse through the diagonal of matrix $M$ in time $O(|t|*|p|)$ iteratively as follows.
-Let $(i',j')$ denotes the current position.
-We process the $i'$-th row starting from position $j'$ until maximum length is reached, i.e. until $i^{'}-j \geq |p|*k$.
-% Process row $i^{'}$ with starting $j^{'}$ (recall it cell by $M[i^{'},j^{'}]$) position  (go right i.e increment $j^{'}$) until $i^{'}-j \geq |p|*k$.
-When the row is processed we shift by one $i^{'}$ down and $j^{'}$ to right of $(i',j')$ for the next iteration if needed (see \todo{picture} \red{This about the top left corner}).
-% Then shift by one $i^{'}$ down and $j^{'}$ to right by one if needed (see picture \red{This about the top left corner}).
-
-Each raw is processed twice.
-First, to detect a maximum score.
-Second, to find the longest suffix with the highest similarity.
-%% When we pass through a slice of the specific row in diagonal $M$,  we also will find the longest suffix with the highest similarity simply by checking elements twice.
-%% First for detect maximum score, second for detect the longest suffix among those who have this score.
-%It requires storing at most $O(p)$ cells for each column but we only process one column at the time, thus, we will require only $O(p)$ additional space for that whole cell processing.
-Thus, for storing for each prefix its longest suffix we need additionally $O(|t|)$ space.
-Let $l^{prefs}$ denotes a list of stored prefixes.
-Additionally, for each substring of length $\frac{p}{k}$ we store similarity score by querying them during diagonal passage.
-Let's denote it by $C$.
-Thus, at the end of the diagonal processing (line 4) $O(t)$ suffixes are collected and they require $O(t)$ space for storing.
-Hence, the overall diagonal processing (line 4) requires $O(|t|+|t|*|p|) = O(|t|*|p|)$ time with $O(|t|+|p|) = O(|t|)$ additional space.
-
-Further (Line 5), we again traverse each element of list $l^{prefs}$ with one step sliding window of size $L_w$.
-For each windows we check wheather it satisfies the similarity criteria, i.e. its similarity score is at most $-k_{di}$.
-The check can be performed by a simple lookup for a specific element of $C$ at $O(1)$.
-If so then then we need $O(|p|)$ lookups within suffixes to query the most similar and longest one.
-%% Further (Line 5), we need to find the longest suffix for each $O(|p|)$ windows with step one in applied to list of size $|t|$ with additional condition that within each window of size $O(\frac{|p|}{k}-|p|*k)=O(|p|)$ the suffix with length $L_{w}$ have similarity score at least $-k_{di}$.
-%% It is simply a one-way pass-through list of suffixes where the processing of each window requires at most $O(|p|+1)=O(|p|)$.
-%% More precisely, first, we check that for current window of size $O(|p|)$ its associated suffix has similarity not less then given threshold $k_{di}$.
-%% It is simply lookup for a specific element in $C$ with $O(1)$.
-%% If that true, then we need $O(|p|)$ lookups within $suffixes$ to query the most similar and longest one.
-The total number of such windows can be approximated as $O(|t|)$.
-Thus, the step (line 5) requires $O(|t|)*O(|p|) = O(|t|*|p|)$ computation time with $O(|t|)$ space.
-%% The filtering process (Line 6) is a one-way pass through a list of suffixes $W_2$.
-%% It requires at most $O(t)$ time.
-
-Thus, the total running time and space complexity of the second phase is $O(|t|*|p|)$ and $O(|t|)$ respectively.
+Thus, the processing of each column of trapezia requires at most $O(|p|)$ time. The total amount of columns is $(|t|)$
+Total time complexity of this phase is $O(|t||p|)$.
+The space complexity of this phase is $O(|p|+|t|)=O(|t|)$ at most.
 
 \emph{Third phase}.
 The third phase remains unchanged, thus have the same time and space bounds as in the base algorithm case.
@@ -164,7 +125,6 @@ Note, it possible to perform this phase in-place during the second phase which s
 The third phase can be approximated as $O(|t| * log|t|)$ for both space and running time complexity.
 
 Thus, the total alforithm running time is $max(O(t * p),\ O(t * \log t))$ while space complexity is $O(t * \log t)$.
-%% \red{It be good if we also improve third phase)))}
 \end{proof}
 
 \begin{theorem}
