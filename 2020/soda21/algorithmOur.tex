@@ -1,30 +1,33 @@
 \section{CutMax a new approximate mathing algorithm}
 \label{section:our}
-\red{Say about extension???}
-We now describe several algorithms that heavily based on \emph{semi-local sa} and it's underlying algebraic structure.
 
-The first algorithm \ref{alg:appximateMatchingGreedy} refers to following constraint.
-There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $\alpha \geq |tau_{i}| \geq \beta$  i.e algorithm should perform greedy choice at each step with length constraint on $\tau_{i}$.
-This is a more intuitive approach i.e like looking for the most similar substring every time with length at least $l$ and at most $r$. 
-\red{Formally}:
+In the section we present several algorithms for approximate pattern mathing that heavily based on semi-local sequence alignment and it's underlying algebraic structure.
+The presented algorithms also support length constraints on the result (on detected clones).
+
+The first algorithm~\ref{alg:appximateMatchingGreedy} implements an idea of the greedy choice of the most suitable clone on each step, i.e. it looks for the most similar substring with length in interval $[\alpha,\ \beta]$ each time for some predefined constants $\alpha$ and $\beta$.
+In other words, it constructs a non-intersected set $\Tau$ of clones of pattern $p$ in text $t$ such that on each step it adds $\tau_i$ to $\Tau$ iff $\tau_i$ has the highest similarity score with $p$ in the rest of the text and its length satisies the length constraint, i.e. $\alpha \leq |\tau_i| \leq \beta$.
+%% The first algorithm~\ref{alg:appximateMatchingGreedy} refers to following constraint.
+%% There should be found all non-intersected clones $\tau_{i}$ of pattern $p$ from text $t$ that has the highest similarity score on the uncovered part of the text $t$ and $\alpha \geq |\tau_{i}| \geq \beta$  i.e algorithm should perform greedy choice at each step with length constraint on $\tau_{i}$.
+%% This is a more intuitive approach i.e like looking for the most similar substring every time with length at least $l$ and at most $r$.
+Formally:\todo{check l and r}
 \begin{equation}
-   \tau_{i} =  \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, \alpha \leq |t_{l,r}| \leq \beta ,t_{l,r} \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
+   \Tau = \bigcup_{i} \tau_i = \bigcup_i \argmax_{l,r \in (t \cap (\cup_{j=1}^{i-1} \tau_{j}),l<r, \alpha \leq |t_{l,r}| \leq \beta ,t_{l,r} \cap (\cup_{j=1}^{i-1} \tau_{j}) = \emptyset } sa(t_{l,r}, p)
 \end{equation}
 
 The algorithm proceeds as follows.
 
-First, the \emph{semi-local sa} problem is solved for given pattern $p$ and text $t$ (Line 1).
-Then, the solution for the string-substring subproblem is queried from it (Lines 2-3).
-Further the diagonal slice of width $r-l$ that corresponds to
-scores of substrings of size in $[l:r]$ is cropped to get partial Monge Matrix (Line 3) (see fig).
-Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.
+First, the semi-local sa problem is solved for given pattern $p$ and text $t$ (line 1).
+Then, the solution for the string-substring subproblem is queried from it (lines 2--3).
+Further, the diagonal slice of width $\beta-\alpha$ which corresponds to scores of substrings of size in $[\alpha,\ \beta]$ is cropped to get a partial Monge matrix (line 4) (\todo{see fig}).
+\todo{Upon partial matrix $M_{partial}$, the full Monge Matrix $M$ is built to build \emph{rmq2D} data structure  for performing range minimum queries on $M$ by Theorem \ref{partialTheorem}.}
 
-Second, algorithm makes recursive call to subroutine $greedy$(algorithm \ref{alg:rec}).
-The $greedy$ routine performs greedy choice of $\tau_{i}$  with maximal alignment within the current uncovered part of the text $t_{i,j}$ with length boundaries for $\tau_{i}$ in $[l:r]$.
-More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within  $t_{i,j}$ (starting at $i$th position and ending at $j$th position of text $t$.
-It is solved via range queries.
+Then, algorithm calls recursive subroutine $greedy$ (algorithm \ref{alg:rec}).
+The $greedy$ routine performs greedy choice of $\tau_{k}$ with maximal alignment within a continious uncovered part of the text $t_{i,j}$ with length boundaries for $\tau_{k}$ in $[\alpha:\beta]$ where $t_{i,j}$ denotes a substing of text $t$ starting at $i$-th element and ending at $j$-th element.
+More precisely, it refers to searching maximum value with corresponding position (row and column) in matrix $M$ within $t_{i,j}$.
+The search is performed via range queries.
 When detected $interval$ has alignment score less then threshold it means that no clones of pattern $p$ are presented in this part of text $t_{i,j}$, and further processing should be skipped.
-Otherwise, the founded clone is added to the final result and the current part of the text splits into two smaller parts and processed in the same way.
+Otherwise, the founded clone $\tau_k$ is added to the final result and the current part of the text splits into two smaller parts and processed recursively in the same way.
+
 Finally, the algorithm outputs a set of the non-intersected intervals of clones of pattern $p$ in text $t$.
 
 
