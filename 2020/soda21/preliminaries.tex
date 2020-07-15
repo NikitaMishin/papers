@@ -9,7 +9,7 @@ The approximate pattern matching problem ($AMatch$) defined as follows.
 Given text $t$, pattern $p$, simularity function $g$, and some threshold $h$ the \emph{approximate pattern matching} problem asks for all substrings from text $t$ that have similarity score  with given pattern $p$ at least $h$ according to a function $g$.  
 
 There exist different extensions and particular cases of the problem.
-The most familiar case, \emph{complete approximate pattern matching} (\emph{CompleteAMatch}) that asks for all substrings of text $t$ that are exact clones of pattern $p$.
+The most familiar case, \emph{String-searching problem} that asks for all substrings of text $t$ that are exact clones of pattern $p$.
 CompleteAMatch can be solved by a number well-knonwn algorithms such as Aho--Korasic, Bouer--Murr, Knuth--Morris--Pratt, and so on.
 The optimal CompleteAMatch solution running time is $O(|p|+|t|)$~\cite{.}.
 Other special cases of AMatch are \emph{approximate pattern matching with k mismatches}~\cite{.}, search of \emph{pattern with wildcard symbols}~\cite{.}, multidimensional \emph{AMatch}~\cite{.}, AMatch with a length constraint on the resulting substrings~\cite{.}, and many more~\cite{.}.
@@ -223,8 +223,14 @@ Given an $n \times n$ Monge matrix $M$, a data structure of size $O(n)$ can be c
 %Given an $n \times n$ staircase\footnote{\red{Staircase matrix %is the matrix where }} Monge matrix $M$, a data structure of %size $O(n)$ can be constructed in $O(n \log n$) time to answer %submatrix maximum queries in $O(\log \log n$) time when random %access to Monge matrix is $O(1)$.
 %end{theorem}
 
+\begin{lemma}\label{lemma}
+The blank entries of  $m \times n $ partial\footnote{Partial matrix is the matrix where some entries undefined, but defined entries in each coloumn and row are contigous} Monge matrix $M$
+can be imlicitily replaced in time $O(m+n)$ that 
+$M$ becomes Monge and $\forall$ $i \in [0:m],j \in [0:n]$ $M[i,j]$ 
+can be queried in $O(1)$ 
+\end{lemma}
 \begin{theorem}~\cite{.}\label{partialTheorem}
-  Given an $n \times n$ partial\footnote{Partial matrix is the matrix where some entries undefined, but defined entries in each coloumn and row are contigous} Monge matrix\footnote{A partial totally Monge matrix is a partial matrix whose defined entries satisfy the Monge property.} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
+Given an $n \times n$ partial Monge matrix\footnote{A partial totally Monge matrix is a partial matrix whose defined entries satisfy the Monge property.} $M$, a data structure of size $O(n)$ can be constructed in $O(n \times \log n$) time to answer submatrix maximum queries in $O(\log \log n$) time when random access to Monge matrix is $O(1)$.
 \end{theorem}
 
 If the random access to Monge matrix is non-constant, say $O(\beta)$, then the results above are satisfied with time construction and query times increased by factor $\beta$.

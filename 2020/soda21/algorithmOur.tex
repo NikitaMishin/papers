@@ -134,39 +134,46 @@ Then, overall algorithm running time and space complexity is as claimed when $v=
 
 
 
-The second algorithm \ref{alg:appximateMatchingMax} uses a less sophisticated approach and a more lightweight one but found fewer duplicates of pattern $p$(see example \ref{}).
-The algorithm also follows a greedy approach but instead of looking at the uncovered part of text $t$ at each step it looks at the text $t$ and chooses the first available substring with the highest score that doesn't intersect with already taken substrings.
-More formally, it approximates algorithm \ref{alg:appximateMatchingGreedy}.
+The second algorithm \ref{alg:appximateMatchingMax} uses a less sophisticated approach but found fewer duplicates of pattern $p$.
+It also uses length constraint but greedy approach
+is much simpler.
 
 \paragraph{Algorithm description}
-First, the \emph{semi-local sa} problem is solved (Line 1).
-Then we solve \emph{complete approximate matching problem} (Line 3) i.e
-for each prefix of text $t$ we find the shortest suffix that has the highest similarity score with pattern $p$ (Line 3):
-\begin{equation}
-    a[j] = \max _{i \in 0 ..j} sa(p,t[i,j]), j \in 0..|t|
-\end{equation}
 
-Further, we remove suffixes whose similarity is below the given threshold $h$ (Line 4).
-Then remaining suffixes are sorted in descending order (Line 5) and the interval tree is built upon them (Lines 7-11).
-The building process comprises from checking that current substring $candidate$ not intersected with already added substrings to $tree$ and adding it to $tree$.
+The first phase as in \ref{alg:appximateMatchingGreedy}
+On the second phase we use Lemma \ref{lemma} to implicitly fill 
+elements of partial Monge matrix to get $M$ Monge matrix.
+Then we solve the following problem (Line 6).
+For each prefix of text $t$ we find the suffix that has the highest similarity score with pattern $p$:
+$$ a[j] = \max _{i \in 0 ..j} sa(p,t[i,j]), j \in 0..|t|$$
+
+Further, we remove suffixes whose similarity is below the given threshold of $h$ (Line 4).
+Then remaining suffixes are sorted in descending order (Line 5) and the interval tree is built upon them (Lines 9-14).
+The building process consists of checking that current substring $candidate$ not intersected with already added substrings to $tree$ and adding it to $tree$.
 Finally, algorithm output set of non-intersected substrings (clones) of pattern $p$ in text $t$.
 
 
 \begin{algorithm}[H]
 \caption{Greedy approximate}
 \label{alg:appximateMatchingMax}
-Input: pattern $p$, text $t$, theshold value $h$\\
+Input: pattern $p$, text $t$, threshold value $h$\\
 Output: Set of non-intersected clones of pattern $p$ in text $t$\\
 Pseudocode:
 \begin{algorithmic}[1]
 
 \STATE{$sa = semilocalsa(p,t)$}
-\STATE{$matrix = sa.getStringSubstringMatrix() $}
-\STATE{$colmax = smawk(matrix) $}
-\STATE{$colmax = colmax.filter(it.score >= h$)}
-\STATE{$colmax = colmax.sortedByDescending(it.score)$}
+\COMMENT{1st phase}
+\STATE{$H = sa.getAssociatedMatrix()$}
+\STATE{$H^{str-sub} = H.stringSubstringMatrix()$}
+\STATE{$M_{partial} = -getPartialMatrix(H^{str-sub},l,r)$}
+\STATE{$M = fillToMongeMatrix(M_{partial})$ }
+\COMMENT{2nd phase}
+\STATE{$colmax = smawk(M) $}
+\STATE{$colmax.filter(it.score >= h$)}
+\STATE{$colmax.sortByDescending(it.score)$}
 \STATE{$tree = buildIntervalTree()$}
 \FOR{$candidate \in colmax$}
+%\COMMENT{3rd phase}
 \IF{$candidate \cap tree = \emptyset $}
 \STATE{$tree.add(candidate)$}
 \ENDIF
@@ -178,47 +185,40 @@ Pseudocode:
 
 \begin{theorem}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in
-$\max (O(|p|*|t|*|v|), O(|t|* \log^2 |t| v))$ time with $O(|t| * v * \log {|t| * v })$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v$ is denominator of normalized mismatch score for semi-local sequence alignment
-$w_{normalized} = (1,\frac{\mu}{v},0)$ assuming we are storing solution matrix implicitly.
-
-\emph{First phase}.
-As shown in section \ref{section:preliminaries} the time complexity 
-of solving $semi-local sa$ is $O(|p|*|t|*|v|)$.
-The space complexity of storing monge matrix of semi-local solution is
-$O(|t| * v * \log {|t| * v })$ at most due to fact that $v-subbistochastic matrix$ has at most $v$ non-zeros in each row and upon these $v * |t|$ points we 
-build two dimensional range tree data structure with $|t| * v * \log {|t| * v }$ nodes that have report range sum queries in $O(\log^2 |t| v)$ time.
-
-\emph{Second phase}.
-$SMAWK$ algorithm requires $O(|t|*q)$ time where $q$ stands for time complexity of  random access of monge matrix.
-Thus, the  total time complexity of line 3 is $O(|t|* \log^2 |t| v)$ .
-Filtering and sorting have at most $O(|t|)$ and $O(|t|*log|t|)$ time complexity.
-In Line 6 simple intialization of interval tree is perfomed that requires $O(1)$.
-
-\emph{Third phase}
-$colmax$ array has as worst case $O(|t|)$ elements when filtering does not eliminate any substrings.
-Thus, adding to interval tree (both operation at most require $O(\log |t|)$ time) as well as intersection in (Lines 8-9) will be perfomed at most $O(|t|)$.
-Thus, the total complexity of last phase is $O(|t|* \log t)$.
-
-As we see, the third  phase is dominated by the second phase in terms of running time and second phase is dominated by the space complexity of third phase. 
-Thereby,the total time and space complexity is $\max (O(|p|*|t|*|v|), O(|t|* \log^2 |t| v))$ and $O(|t| * v * \log {|t| * v })$  respectively.
- 
-
+$\max (O(|p||t|), O(|t|* \log |t|))$ time with $O(|t|  \log {|t| * v })$ space when $|p|<|t|$ where $p$ is pattern, $t$ is text and $v=O(1)$ is denominator of normalized mismatch score for semi-local sequence alignment
+$w_{normalized} = (1,\frac{\mu}{v},0)$.
 \end{theorem}
 
+\emph{First phase}.
+The total running time and space complexity of first phase is 
+$max(O(|t||p|, |t| \log |t|)$ as in \ref{alg:appximateMatchingGreedy}.
 
-\begin{corollary}
-Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
-$\max ( O(|p| * |t|), O(|t| * \log |t|))$ when $v = O(1)$.
 
-When $v = O(1)$ we will use simple range tree for orthogonal range queries with  $O(log|t|)$ query time.
+At the second phase we use Lemma \ref{lemma} with non-constant access to matrix element of $O(\frac{\log |t|}{\log \log |t|})$.
+Then, running time complexity of implicitly filling
+blank entries in $M_{partial}$ is 
+$O(\frac{|t| \log |t|}{\log \log |t|})$ to get Monge matrix $M$.
+Then to find for each prefix the suffix that is most similar to pattern $p$ with length in $[l:r]$ we simply run \emph{SMAWK}
+the algorithm on matrix $M$ (Line 6).
+After that we will filter out resulting suffices by given threshold $h$ and sort remaining suffices in descending order (Lines 7-8).
+There will be at most $O(r-l)=O(|t| - 0) = O(|t|)$ suffices.
+Thus sort operation complexity  is $O(|t| \log |t|)$.
 
-\end{corollary}
+\emph{Third phase}
+$Colmax$ array has as worst-case $O(|t|)$ elements when filtering does not eliminate any substrings.
+Thus, 
+there are at most $O(|t|)$ additions and intersections with the tree (Lines 11-12).
+Since both operation time complexity is  $O(\log |t|)$.
+Then overall running time complexity is $O(|t|\log |t|)$.
+
+Thereby, the total time and space complexity of algorithm is $\max (O(|p|*|t|), O(|t|* \log |t| ))$ and $O(|t|)$  respectively.
+ 
 
 \begin{corollary}
 Algorithm \ref{alg:appximateMatchingMax} could  be solved in 
 $O(|p| * |t|)$.
 
-When amount of clones is relatively small and threshold value is set high  then after filtering out $t$ intervals (Line 4) sorting is perfomed on s small set of elements.
+When the amount of clones is relatively small and the threshold value $h$ is set high,  then after filtering out $t$ intervals (Line 4) sorting is performed on s small set of elements.
 Thus, this part is dominated by calculating semi-local sa solution.
 \end{corollary}
 
