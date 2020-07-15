@@ -1,21 +1,25 @@
 \section{Introduction}
 % approximate string matching: many areas
-Approximate string matching is an important task in many fields such as computational biology, signal processing, text retrieval and etc.
+Approximate pattern matching is an important task in many fields such as computational biology, signal processing, text retrieval and etc.
 It also refers to a duplicate detection subtask.
 
 % basic formulation of approximate matching
-In general form it formulates as follows: Given some pattern $p$ and text $t$ need to find all occurrences of pattern $p$ in text $t$ with some degree of similarity.
+In general form it formulates as follows: Given some pattern $p$ and text $t$ it asks to find all occurrences of pattern $p$ in text $t$ with some degree of similarity.
 
 % short overview what constarins could be
 There are many algorithms that solve the above problem.
 Nonetheless, the number of algorithms sharply decreases  when the algorithm needs to meet some specific requirements imposed by running time, space complexity or specific criterion for the algorithm itself.
 For example, recently there was developed an approach for interactive duplicate detection for software documentation~\cite{luciv2019interactive}.
-The core of this approach is an algorithm that detects approximate clones of a given user pattern with a specified degree of similarity. 
+The core of this approach is an algorithm that detects approximate clones of a given pattern $p$ with a specified degree of similarity and length boundaries for detected clones.
 The main advantage of the algorithm is that it meets a specific requirement of completeness.
-Nonetheless, it has an unpleasant time complexity.    
+Nonetheless, it has an unpleasant time complexity.
 
 
-The algorithm for approximate detection utilizes mainly algorithm for solving the longest commons subsequence (\emph{LCS}) problem.
+
+    
+
+
+The common approach of algorithm for approximate detection utilizes mainly algorithm for solving the longest commons subsequence (\emph{LCS}) problem.
 The longest common subsequence is a well-known fundamental problem in computer science that also has many applications of its own.
 The major drawback of it that it shows only the global similarity for given input strings.
 For many tasks, it's simply not enough.
