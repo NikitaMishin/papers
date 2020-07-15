@@ -11,7 +11,7 @@ It is also proved that the improved algorithm preserves all advantages of the in
 \subsection{Algorithm description}
 As the base one (see section~\ref{sec:lucivalgo} and~\ref{Luciv}), the presented algorithm consists of three sequential phases.
 %Moreover, each step of the presented algorithm imitates the corresponding step of the base one.
-Aldorithm pseudocode is presented at Algorithm~\ref{alg:patternMathing1}.
+Algorithm pseudocode is presented at Algorithm~\ref{alg:patternMathing1}.
 % As the base one, the presented algorithm comprises three phases.
 
 At the first phase (lines 1-3) semi-local sa problem is solved for pattern $p$ against the whole text $t$.
@@ -107,17 +107,16 @@ More precisely, we process the diagonal of width $O(\frac{|p|}{k}-|p|*k)=O(|p|)$
 Note, that the bold triangle in Fig  \ref{M2} corresponds to the set of substrings with sizes in the interval $I$ that contains in the last substring with size $L_{w}$ of text $t$.
 During processing each triangle we  additionally store list $longestForRow$ of size $\frac{|p|}{k}-|p|k$ that contains
 for each row (represent prefix) the suffix that is most similar to pattern $p$ for given window (triangle on Fig. \ref{M2}).
-This list updated every time when we shift triangle by one symbol step ($(x,y)\rightarrow (x-1,y-1)$).
-Thus, to get the longest substring that most similar to pattern $p$ for the given window we simply need
-to check $longestForRow$. 
+This list updates every time when we shift triangle by one symbol step ($(x,y)\rightarrow (x-1,y-1)$).
+Thus, to get the longest substring that most similar to pattern $p$ for the given window we simply need to check $longestForRow$. 
 Thereby, we proceed as follows.
-We check that the current window meets criteria
-on similarity (it is just lookup to list $lstW$)
+We check that the current window meets criteria on similarity (it is just lookup in list $lstW$).
 If so, then we find maximal substring among all associated with the current window (triangle) by checking $O(|p|)$ elements of $longestForRow$ and save it to set $W_{2}$ as described above.
 
-Thus, the processing of each column of trapezia requires at most $O(|p|)$ time. The total amount of columns is $(|t|)$
-Total time complexity of this phase is $O(|t||p|)$.
-The space complexity of this phase is $O(|p|+|t|)=O(|t|)$ at most.
+Thus, the processing of each column of trapezia requires at most $O(|p|)$ time.
+The total amount of columns is $(|t|)$.
+Total time complexity of this phase is $O(|t|*|p|)$.
+The space complexity of this phase is at most $O(|p|+|t|)=O(|t|)$.
 
 \emph{Third phase}.
 The third phase remains unchanged, thus have the same time and space bounds as in the base algorithm case.
