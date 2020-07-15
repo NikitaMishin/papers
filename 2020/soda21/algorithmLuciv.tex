@@ -152,35 +152,32 @@ Thus, the total alforithm running time is $max(O(t * p),\ O(t * \log t))$ while 
 \end{proof}
 
 \begin{theorem}
-Algorithm \ref{alg:patternMathing1} preserves completnesses property of algorithm \cite{luciv2019interactive} with scoring scheme  $w = (0,-2,-1)$ and have running time and space complexity $max(O(tp),O(t \log t))$ and $O(t \log t)$  respectively.
+Algorithm \ref{alg:patternMathing1} with scoring scheme $w = (0,-2,-1)$ preserves completnesses property of algorithm~\cite{luciv2019interactive} and has running time and space complexity $max(O(t*p),\ O(t* \log t))$ and $O(t *  \log t)$  respectively.
 \end{theorem}
 
-First, note  that \emph{edit distance} in algorithm \cite{.} may be expressed as sequence alignment  with following scoring scheme: 
-\begin{displaymath}
-w_{sa}=(w_{+},w_{0},w_{-}) = (0,-2,-1)
-\end{displaymath}
-Then to get intial $edit score$ we need to apply inverse operation:
-\begin{equation}\label{editsa}
-editscore(a,b) = -sa(a,b,w_{sa}) 
-\end{equation}
+\begin{proof}
+Edit distance in the base algorithm~\cite{.} may be expressed as sequence alignment with following scoring scheme: 
+$$w_{sa}=(w_{+},w_{0},w_{-}) = (0,-2,-1).$$
 
-Next, $w_{sa}$ may be normalized using normalization \ref{weightNormalization}:
-\begin{displaymath}
-(0, -2, -1) \rightarrow (1,\frac{\mu=0}{v=1}, 0)
-\end{displaymath}
-Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.
+First, to get intial edit score we need to apply inverse operation:
+$$editscore(a,b) = -sa(a,b,w_{sa}).$$
+Next, $w_{sa}$ may be normalized using normalization~\ref{weightNormalization}:
+$$(0, -2, -1) \rightarrow (1,\frac{\mu=0}{v=1}, 0).$$
+\todo{equivalent? Thus, $d_{di} \leq k_{di}$ is the same as $sa \geq -k_{di}$.}
 
 Second, let's carefull review phases 1 and 2 of given algorithms.
-At first algorithm \ref{.} pass through text $t$ with sliding window to detect those fragments which has edit score above given threhsold $k_{di}$ with size $L_{w}$.
-Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size within  $I=pk...L_{w}$ interval.
-Algorithm \cite{.} proceeds in very similar but ,informally, phases are swapped.
-First, it detects longest suffixes with size in $I$ interval for each prefix of text $t$.
-Then it proceeds in a such way that for each window of size $L_{w}$ that have aligment score with pattern $p$ below given threshold $-k_{di}$  the longest suffix most similar to $p$ is detected.
-Due to formula  \ref{editsa} the resulting set of second phases of two algorithms is equals.
-The third phase is unchaned in algorithm \cite{.}.
-Thus, algorithm \cite{}  preserves  completnessess property.
-For given $w = (0,-2,-1)$ we have $v=1$ then wehave running time as claimed.
-
+The base algorithm passes through the text with a sliding window to detect those fragments of size $L_{w}$ which have edit score above given threshold $k_{di}$.
+Then within these fragments algorithm detects longest suffixes that are most similar to pattern $p$ with size within interval \todo{$I=pk...L_{w}$}.
+The presented improved algorithm proceeds in a very similar way but, informally, phases are swapped.
+First, it detects the longest suffixes with size in interval $I$ for each prefix of the text.
+Then, it proceeds in such way that for each window of size $L_{w}$ that has alignment score with pattern $p$ below given threshold $-k_{di}$  the longest suffix most similar to $p$ is detected.
+Due to \todo{formula~\ref{editsa}} results of the second phases of the algorithms are equal.
+The third phase remains unchaned in the presented algorithm.
+%% Thus, the presented algorithm preserves completeness.
+Thus, the presented algorithm is complete.
+For $w = (0,-2,-1)$, $v=1$ then algorithm running time and space complexity are as claimed.
+%% For given $w = (0,-2,-1)$ we have $v=1$ then wehave running time as claimed.
+\end{proof}
 
 %At first algorithm \ref{luciv} pass through text $t$ with sliding window to detect those fragments which has similarity abobe given threhsold $k_{di}$ with size $\frac{p}{k}$.
 %Then within these fragments algorithm detects longest suffixes most similar to pattern $p$ with size within  $pk...\frac{p}{k}$ interval.
