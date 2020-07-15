@@ -1,11 +1,15 @@
 \section{Conclusion}
 \label{section:conclusion}
 
-Say may be succesfully be applied on practice (showed by algorithm luciv updated)
+Although presented algorithms have a good running time and space complexity, there is unclear how would they behave in practice.
+Algorithms are heavily based on \emph{semi-local sa}, thus
+there are also need to provide an empirical evaluation of 
+algorithms that solve \emph{semi-local sa}.
+Also, the research question arises about hidden constants of used data structures and algorithms itself.  
 
-
-Open problem.$->$
-
-Say that need to implement with monge2020 (what we not finished)
-
-Improve algo based on recursive steady ant. Because it's critical for algos based on it.
+Thus, the following research questions have not been settled in this paper and require further study.
+\begin{enumerate}
+\item Does improved algorithm \ref{alg:patternMathing1} performs better then \cite{luciv2019interactive}  in pracite?
+\item What hidden constant of described algorithms and how well they perform in practise?
+\item How well performs algorithm for \emph{semi-local sa} in practice?
+\end{enumerate} 
