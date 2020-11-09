@@ -1,40 +1,122 @@
 \section{Introduction}
+
 % approximate string matching intro
-The approximate pattern matching is a well-known and studied problem.
-It seeks to find all substrings of text $t$ that are close enough in terms of selected similarity function (TODO: or metric) to given pattern $p$.
+The approximate pattern matching (\emph{AMatch}) is a well-known and studied problem.
+Given some text $t$ and pattern  $p$ the \emph{AMatch} problem asks for all substrings of text $t$ that are close enough to pattern $p$ by some similarity measure.
+
+% mant applications and difficulty
 This problem arises in many fields.
-For example,  it applied to computational biology, signal and image processing, text retrieval and etc.
-
-% Application in different fields entails various versions of this problem  with some 
-
-% various extension
-
+For example,  it applied in computational biology, signal and image processing, text retrieval and etc.
 There also exist several variants of this problem that have different objectives with various implicitly or explicitly defined constraints.
+Although there are plenty of algorithms that solve \emph{AMatch} problem, the amount of algorithms significantly decreases when it comes to setting some constraints upon output. Nonetheless, recently, there was research in which the algorithm with implicitly defined length constraint was presented.
+This constraint was imposed on the lower and upper bound length of matching substrings.
+The algorithm is of interest not only because of the above limitation but also due to the fact that it satisfies some criteria of completeness that useful for some applications.
+However, it has an unpleasant time complexity.
 
-The length constraint of matching subsequences is an example of the latter one.
-It used in computational bioinformatics when the search  of a particular DNA subsequence in
-a large DNA sequence or DNA DATABASE is performed.
-Consider the case where we are given two matching substrings where the first one has a slightly higher similar score but has a significantly smaller size compared to the second one.
-There may be a situation when the application will yield only the first one substring although the second one may be more significant biologically.
-Thus, a specific lower bound on matching substrings should be set.
+Taking into account the practical significance of this constraint in different tasks and domains we have developed an improved version of the algorithm [luciv] with the perseverance of all of its properties.
+This is achieved via adaptation and integration of algorithms that solve a novel string problem called "semi-local lcs problem".
 
-Now consider the opposite case when the first one has a slightly smaller similar score but has a significantly smaller size compared to the second one.
-There could be a situation when the first one is much more significant in biology terms than the second one but the application will yield the second one. 
-Thus, a specific upper bound on matching substrings should be set.
+Further, we have defined a variant of \emph{AMatch} problem with explicitly set length constraint and presented exact and approximate algorithms for it.
+Recent achievements in RMQ in Monge matrices is the key part of these algorithms.
 
-Same constraint arises in clone detection task when too small matching duplicates may be irrelevant  (article, interjections, punctuation marks, common words) whereas too big duplicates could not contains pattern at all (simply contains a word of pattern).
+Thus, the main contribution of this paper is:
+\begin{itemize}
+    \item Improved version of the algorithm from []
+    \item Algorithm for the new problem with an explicitly set length constraint on matching substrings 
+    \item Application of  "semi-local problem"
+\end{itemize}
+
+\red{FILL WHEN OTHER PART IS READY}
+The paper is orgranized as follows.
+
+First, we give some basic definitions in section \ref{section:preliminaries}. Then, in  
 
 
-The common approach of algorithm for approximate pattern matching utilizes  algorithm for solving the longest commons subsequence (\emph{LCS}) and sequence alignment (\emphs{SA})  problems.
 
-The longest common subsequence is a well-known fundamental problem in computer science that also has many applications of its own.
-The major drawback of it that it shows only the global similarity for given input strings.
-For many tasks, it's simply not enough.
-The approximate matching is an example of it.
+% The length constraint of matching subsequences is an example of the latter one that often used in practice.
+% It used in computational bioinformatics when the search  of a particular DNA subsequence in
+% a large DNA sequence or DNA DATABASE is performed.
+% Consider the case where we are given two matching substrings where the first one has a slightly higher similar score but has a significantly smaller size compared to the second one.
+% There may be a situation when the application will yield only the first one substring although the second one may be more significant biologically.
+% Thus, a specific lower bound on matching substrings should be set.
 
-There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{tiskin2008semi} which can overcome this constraint. 
-The effective theoretical solutions for this generalized problem found applications to various algorithmic problems~\cite{tiskin2009periodic,tiskin2006longest,tiskin2011towards}.
+% Now consider the opposite case when the first one has a slightly smaller similar score but has a significantly smaller size compared to the second one.
+% There could be a situation when the first one is much more significant in biology terms than the second one but the application will yield the second one. 
+% Thus, a specific upper bound on matching substrings should be set.
 
-% research question Q1
-Although the algorithms for \emph{semi-local LCS} have good theoretical properties, there is unclear how they would behave in practice for a specific task and domain.
-More particularly, how it could be applied to approximate pattern matching with mentioned lower and upper bound on length constraint on matching subsequences.
+% Same constraint arises in clone detection task when too small matching duplicates may be irrelevant  (article, interjections, punctuation marks, common words) whereas too big duplicates could not contains pattern at all (simply contains a word of pattern).
+
+
+% The common approach of algorithm for approximate pattern matching utilizes  algorithm for solving the longest commons subsequence (\emph{LCS}) and sequence alignment (\emph{SA})  problems.
+
+% The longest common subsequence is a well-known fundamental problem in computer science that also has many applications of its own.
+% The major drawback of it that it shows only the global similarity for given input strings.
+% For many tasks, it's simply not enough.
+% The approximate matching is an example of it.
+
+% There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{tiskin2008semi} which can overcome this constraint. 
+% The effective theoretical solutions for this generalized problem found applications to various algorithmic problems~\cite{tiskin2009periodic,tiskin2006longest,tiskin2011towards}.
+
+% % research question Q1
+% Although the algorithms for \emph{semi-local LCS} have good theoretical properties, there is unclear how they would behave in practice for a specific task and domain.
+% More particularly, how it could be applied to approximate pattern matching with mentioned lower and upper bound on length constraint on matching subsequences.
+
+
+% This paper is organized as follows
+
+% % research question Q2
+% To show the applicability of semi-local lcs on practice we developed several algorithms based mainly on it and the underlying algebraic structure.
+% As well as developing new algorithms we improve the existing algorithm for duplicate detection in software documentation from~\cite{luciv2019interactive}.
+% It should be noted that improvement preserves all properties of this algorithm.
+% All presented algorithms also supports length constraints on the resulting substrings.
+% Finally, we provided and proved running time and space complexity for all presented algorithms.
+
+
+
+
+
+% Nonetheless, the number of suitable algorithms sharply decreases when the algorithm needs to meet some specific requirements imposed by running time, space complexity or specific criterion and constraints. 
+
+
+
+
+
+
+% % short overview what constarins could be
+% There exists a lot of algorithms that solve the above problem.
+% Nonetheless, the number of suitable algorithms sharply decreases when the algorithm needs to meet some specific requirements imposed by running time, space complexity or specific criterion for the algorithm itself.
+% For example, recently there was developed an approach for interactive duplicate detection for software documentation~\cite{luciv2019interactive}.
+% The core of this approach is an algorithm that detects approximate clones of a given pattern $p$ with a specified degree of similarity and length boundaries for detected clones.
+% The main advantage of the algorithm is that it meets a specific requirement of completeness.
+% Nonetheless, it has an unpleasant time complexity.
+
+
+
+   
+% The common approach of algorithm for approximate detection utilizes mainly algorithm for solving the longest commons subsequence (\emph{LCS}) problem.
+
+% The longest common subsequence is a well-known fundamental problem in computer science that also has many applications of its own.
+% The major drawback of it that it shows only the global similarity for given input strings.
+% For many tasks, it's simply not enough.
+% The approximate matching is an example of it.
+
+% There exist generalazation for \emph{LCS} called \emph{semi-local LCS}~\cite{tiskin2008semi} which overcome this constraint. 
+% The effective theoretical solutions for this generalized problem found applications to various algorithmic problems~\cite{tiskin2009periodic,tiskin2006longest,tiskin2011towards}.
+% %For example, there has been developed algorithm for approximate matching in the grammar-compresed strings~\cite{.}.
+
+% % research question Q1
+% Although the algorithms for \emph{semi-local LCS} have good theoretical properties, there is unclear how they would behave in practice for a specific task and domain.
+% % research question Q2
+% To show the applicability of semi-local lcs on practice we developed several algorithms based mainly on it and the underlying algebraic structure.
+% As well as developing new algorithms we improve the existing algorithm for duplicate detection in software documentation from~\cite{luciv2019interactive}.
+% It should be noted that improvement preserves all properties of this algorithm.
+% All presented algorithms also supports length constraints on the resulting substrings.
+% Finally, we provided and proved running time and space complexity for all presented algorithms.
+
+% %% The paper is organized as follows.
+% %% Blablabla
+% %% \cref{sec:main}, our new algorithm is in \cref{sec:alg}, experimental
+% %% results are in \cref{sec:experiments}, and the conclusions follow in
+% %% \cref{sec:conclusions}.
+
+
