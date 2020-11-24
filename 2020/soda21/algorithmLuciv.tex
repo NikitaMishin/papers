@@ -1,35 +1,61 @@
 \section{Algorithm for near duplicate detection}
 \label{section:luciv}
+The improved version of the algorithm for duplicate detection from 
+\cite{luciv2019interactive} is described in this chapter.
+The main idea of the improvement is the utilization of the solution of the semi-local lcs problem.
+First, we solve the semi-local lcs problem for the pattern against the entire text and then process a specific part of the string-substring submatrix of the solution.
+We will emulate the first and the second phases of the original algorithm by doing this. The third phase remains the same.
+Thus, we have improved the overall time complexity of the original algorithm and maintained its properties.
 
-In the section the improved version of Luciv et.al. algorithm~\cite{luciv2019interactive} is presented.
-The utilization of semi-local sequence alignment algorithms in algorithm phases improves overall time complexity.
-%% We now describe an improved version of  by utilizing a \emph{semi-local sa} solution.
-%% Then we present proof that improved version preserves completnesess property.
-%% It is achieved by imitating all phases of the algorithm. 
-It is also proved that the improved algorithm preserves all advantages of the initial one stated at~\cite{luciv2019interactive} such as search completeness.
 
 \subsection{Algorithm description}
-As the base one (see section~\ref{sec:lucivalgo} and~\cite{luciv2019interactive}), the presented algorithm consists of three sequential phases.
-%Moreover, each step of the presented algorithm imitates the corresponding step of the base one.
-Algorithm pseudocode is presented at Algorithm~\ref{alg:patternMathing1}.
-% As the base one, the presented algorithm comprises three phases.
+Algorithm consists of three phases as the original one.
+Algorithm pseudocode is presented in Algorithm~\ref{alg:patternMathing1}.
 
-At the first phase (lines 1-3) semi-local sa problem is solved for pattern $p$ against the whole text $t$.
-This solution provides access to the string-substring matrix $H^{str-sub}_{p,t}$ which allows performing fast queries of \emph{sa} score for pattern $p$ against every substring of text $t$.
-Then, we construct matrix $M$ by applying transposition and inverse operation implicitly on $H^{str-sub}_{p,t}$:
-$$M[j,i]:= -H^{str-sub}_{p,t}[i,j].$$
-Note, transposition operation preserves (anti) Monge property whereas inverse operation transforms anti-Monge matrix into the Monge one and vice versa. 
-Thus, $M$ is a Monge matrix.
+Note that in common case  the minimum edit score  can be expressed via maxmimal alignment score. The edit score from the original  algorithm expressed via alignment score with following weights:
+\begin{equation}\label{weightAppr}
+    (w_{+},w_{0},w_{-}) = (0,-2,-1)
+\end{equation}
+By virtue of formula (ref), the weights of the normalized scheme will be as follows:
+\begin{equation}
+    (0, -2, -1) \rightarrow (1,\frac{\mu=0}{v=1}, 0)
+\end{equation}
+Thereby, using normalization, the minimal edit score in the original algorithm can be reduced to \emph{semi-local lcs}. Given some lcs score, the associated minimal edit score can be obtained by first applying reverse regularization via (ref) and then adding a minus sign to the result.
 
-The second phase comprises several steps (lines 4--6).
-First, we want to get for each substring with length exactly $L_{w}$ in  $t$ its alignment score against pattern $p$ where $k \in (\frac{1}{\sqrt{3}},1]$.
-Second, for each substring $w$ of size $L_{w}$ in text $t$ that meets criteria on similarity with given threshold $-k_{di}$ the following should be done.
-The longest substring  most similar to pattern $p$ should be taken.
-it could be done by processing the diagonal 
-matrix $M$ with width $c:= \frac{|p|}{k} - |p|*k = |p|(\frac{1}{k} - k)$ (Fig. \ref{M2}).
+Now we describe each phase in detail.
 
-The third phase (lines 6--11) is the same as in the base algorithm.
+\textbf{First phase}. 
+The first phase refers to solving semi-local problem for pattern $p$ against text $t$ (Line 1) and obtaining associated with it semi-local kernel $P^{str-sub}_{p,t}$ (Lines 2-3).
+This kernel is an implicit presentation of string-substring matrix $M^{str-sub}_{p,t}$ that contains all lcs scores of pattern $p$ against all substrings of text $t$ (ref to theorem).
+Further, for simplicity explanation, we will reason in terms of matrix $M^{str-sub}_{p,t}$.
 
+\textbf{Second phase}.
+At the second phase we process a text $t$ with a sliding window of size $\frac{|p|}{k}$ with a one symbol step  where $k  \in [\frac{1}{\sqrt{3}},1]$ is a similarity measure as in \cite{luciv2019interactive}.
+Then within each window $w$, we process all substrings with sizes in the interval $I$ to find the substring that has the highest minimal edit score with pattern $p$. If there are several substrings within the considered window with the same minimal edit score, then the longest one will be taken.
+We call such substrings a \emph{good} ones.
+Moreover, to conform with the original algorithm, we leave only those substrings whose associated edit score of pattern $p$ against window $w$ is less than or equals to the defined threshold $k_{di}$\footnote{In the original algorithm, we first select suitable windows and then process them whereas in our approach we first process each window and only then select appropriate substrings within each window}.
+
+The presence of matrix $M^{str-sub}_{p,t}$ allows us to process this phase asymptotically optimal.
+First, all substrings with lengths in interval $I$ lie exactly in a diagonal slice (trapezoid in fig ) with width equals to $width:=\frac{|p|}{k} - |p|*k = |p|(\frac{1}{k}-k)$  in  $M^{str-sub}_{p,t}$.
+The jagged triangles represent each window $w$ of text $t$ \footnote{ We also may consider square matrices but it superfluous because elements that lie below the main diagonal represents substrings with inappropriate small lengths}.
+Thus, we only need to process cells in this diagonal during the second phase.
+
+During the first traverse we query scores of each window $w$ against pattern $p$ and store them in list $L_{|w|}$. It is simply a one-way passage through diagonal\footnote{Cells $(i_{l},j_{l})$ whose indices satisfy the following equality: $j_{l}-i_{l} = \frac{|p|}{k}$} of size $O(|t|)$. This list will be needed further to leave only appropriate substrings within each window.
+
+During the second traverse, we visit each cell that lies in the trapezoid associated with all substrings with lengths in interval $I$ in  the matrix $M^{str-sub}_{p,t}$.
+The traversal algorithm for the second passage is shown in Fig.  ref {passage}.
+We process diagonal in column fashion starting from the cell (0,$\frac{|p|}*k$).
+As part of the traversal, we will maintain a  double linked list $rowMin$ that holds the following invariant at the end of processing some window $w$: 
+$rowMin$ contains the largest substrings with the minimal edit score for the current suffixes of window $w$.
+To find the  \emph{good} substring in current window $w$ we need to get the largest substring with the minimal edit score from $rowMin$. Then we will add this substring to $W_{2}$ if the associated window $w$ has the edit score less than or equals to $k_{di}$ (need just to check element of list $L_{|w|}$).
+Then to get \emph{good} substring for the next window we remove the head of $rowMin$ and add a dummy element to the tail.
+The first one represents a suffix which not fully contains in the current window,  the last one represents a new suffix that contains in the new window and now satisfies length constraints. 
+After that, while processing the next column we update $rowMin$ and repeat the previous process. 
+
+At the end of this phase, we have obtained a set $W_2$.
+
+\textbf{Third phase}. 
+This phase remains the same as in base algorithm.
  
 \begin{figure}
 	\centering
@@ -87,9 +113,10 @@ Algorithm \ref{alg:patternMathing1} runs in $max(O(|t|*|p|),\ O(|t| * \log |t|))
   For each phases of algorithm we provide it's time and space bounds.
   
 \emph{First phase.}
-We store solution $H$ of \emph{semi-local sa} by decomposing it to permutation matrix $P$ of size $O(v*|t| \times v*|t|)$ (lines 1-3, Theorem~\ref{decomposition}).
-The permutation matrix can be stored via two permutations of size $v*|t|$ for columns and rows.
-It is simply two lists of size $v*|t|$.
+.. TODO
+The time complexity of obtaining kernel $P_{p,t}$ is $O(|p|\times |t|)$ and requires $O(|t|+||)$ space.
+The permutation matrix can be stored via two permutations of size $|t|$ for columns and rows.
+It is simply two lists of size $|t|$.
 Then, for random access query in specific position $(i,j)$ of matrix $H$ one need to check how many points are dominated by $H [i,j]$.
 It can be done by checking all points of permutation matrix and requires $O(v * |t|)$ steps.
 Thus, the total time and space complexity of the first phase are $O(v^2 *|p| * |t|)$ (time needed to solve semi-local sa) and $O(v*|t|)$ respectively.
@@ -172,4 +199,5 @@ For $w = (0,-2,-1)$, $v=1$ and algorithm running time and space complexity are a
  %for those windows of size $\frac{p}{k}$ the longest suffix is left.
 
 %T%%hus, $A_1=A_2$  by resulting equivalence of construction. 
+
 
