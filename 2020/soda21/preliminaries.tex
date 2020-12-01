@@ -27,23 +27,30 @@ Despite the algorithm has poor time complexity, the proposed solution possesses 
 Precisely due to the completeness property the algorithm is of intereset in this paper.
 The algorithm is described in section~\ref{sec:lucivalgo} while the developed improved version is presented in section~\ref{section:luciv}.
 
-\subsection{Global lcs and sa}
-% Semi-local lcs and sa are extensions of \emph{lcs} and \emph{sa} problems, respectively.
+\subsection{Global LCS and SA}
+There several ways of defining the problem of measuring the similarity between two strings.
+The longest common subsequence problem is the fundamental one.
+It defines as follows.
 
 \begin{definition}
-Given two strings $a$ and $b$ the longest common subsequence problem \emph{(LCS)} ask for the maximal length of the longest common subsequence (\emph{lcs} score) of $a$ and $b$ ($lcs(a,b)$).
+Given two strings $a$ and $b$ the longest common subsequence problem (\emph{LCS}) ask for the maximal length of the longest common subsequence (\emph{lcs score}) of $a$ and $b$: $lcs(a,b)$.
 \end{definition} 
-%\todo{In other words, \emph{LCS} problem asks about maximal %$lcs$ score of two given string $a$ and $b$ ($lcs(a,b)$)}.
+
+The \emph{lcs score} may be inappropriate in cases when we want to penalize for non matched symbols.
+For such cases the concept of sequence alignment is applicable.
+Alignment of two sequences is the way of putting each symbol of one sequence to another one into one-to-one correspondence respecting index order.
+When two sequences have aligned there are three options for each pair of symbols: they match, mismatch or one component of the pair is a so-called gap symbol (when some symbol from one sequence is not aligned with any symbol from the other one).
+Each pair contributes to the final alignment score for some alignment.
+if symbols match, then the pair contributes $w_{+}$ score. 
+if symbols mismatch then the pair contributes $w_{0}$ score.
+Otherwise, a symbol of one sequence aligned with the gap.
+In such cases, this pair contributes $w_{-}$ score.
 
 \begin{definition}
-Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$ the sequence alignment (\emph{SA}) problem ask for the maximal alignment score between $a$ and $b$ ($sa(a,b,w)$).
+The triple $w=(w_{+},w_{0},w_{-})$ where $w_{+},w_{0},w_{-} \in \mathbb{R} $ called scoring scheme.
 \end{definition}
 
-Scoring scheme determines how to calculate the alignment score of two aligned sequences.
-If a pair of character in aligned sequences are matched (equal) then this pair contributes to the final alignment score $w_{+}$, if their mismatch it contributes $w_{0}$.
-If symbol $\alpha$ of one of the sequences is not aligned with any other symbol from another sequence it means that $\alpha$ is aligned with a $gap$.
-In this case, this pair contributes $w_{0}$.
-The final scoring scheme calculates as follows:
+The so-called \emph{alignment score} for some alignment of $a$ and $b$ calculates as follows:
 \begin{equation}\label{formula:sa}
 \begin{array}{ll}
     sa(a,b,w) &= w_{+}k^{+} + w_{0}k^{0} + w_{-} (|a| + |b| - 2k^{+} - 2k^{0}) \\
@@ -51,8 +58,18 @@ The final scoring scheme calculates as follows:
 \end{array}
 \end{equation}
 where $k^{+}$ stands for the number of matched symbols, $k^{-}$ --- the number of mismatched symbols.
-Note that \emph{LCS} is a special case of \emph{SA} with scoring scheme be $(1,0,0)$.
-Both described problems can be solved with usual dynamic programming algorithm having running time complexity $O(|a|*|b|)$.
+So, scoring scheme determines how to calculate the alignment score of two aligned sequences.
+
+To measure how similar two sequences we can find their best alignment that has a maximal \emph{ alignment score}.
+This is a well-known problem:
+\begin{definition}
+Given two strings $a$ and $b$ and scoring scheme $w=(w_{+},w_{0},w_{-})$ the sequence alignment (\emph{SA}) problem ask for the maximal alignment score (\emph{sa score}) between $a$ and $b$: $sa(a,b,w)$.
+\end{definition}
+
+
+
+Note that \emph{LCS} is a \emph{SA} with scoring scheme $(1,0,0)$.
+Both described problems can be solved using dynamic programming algorithm having running time complexity $O(|a|*|b|)$.
 
 \subsection{Semi-local lcs}
 
@@ -322,3 +339,4 @@ We just state the following theorem:
 \begin{theorem}~\cite{luciv2019interactive}
 For any $p \in t$ , $k \in (\frac{1}{ \sqrt{3}} , 1]$, and near duplicate group $G$ of fragment $p$ with similarity $k$ the criterion of \emph{completeness} is satisfied with respect to the output of phase 2.
 \end{theorem}
+
