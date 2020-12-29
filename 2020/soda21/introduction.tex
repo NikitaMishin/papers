@@ -5,26 +5,56 @@ The approximate pattern matching (\emph{AMatch}) is a well-known and studied pro
 Given some text $t$ and pattern  $p$ the \emph{AMatch} problem asks for all substrings of text $t$ that are close enough to pattern $p$ by some similarity measure.
 
 % mant applications and difficulty
-This problem arises in many fields.
-For example,  it applied in computational biology, signal and image processing, text retrieval and etc.
-There also exist several variants of this problem that have different objectives with various implicitly or explicitly defined constraints.
-Although there are plenty of algorithms that solve \emph{AMatch} problem, the amount of algorithms significantly decreases when it comes to setting some constraints upon output. Nonetheless, recently, there was research in which the algorithm with implicitly defined length constraint was presented.
-This constraint was imposed on the lower and upper bound length of matching substrings.
-The algorithm is of interest not only because of the above limitation but also due to the fact that it satisfies some criteria of completeness that useful for some applications.
-However, it has an unpleasant time complexity.
+This problem arises in many fields such as computational biology, signal and image processing, text retrieval and etc \cite{}.
+The diverse applications in sundry domains lead to different extensions of the problem which include additional constraints or even different objectives \cite{}.
+Although there is a plurality of algorithms for solving the original \emph{AMatch} problem, the algorithm quantity dwindles notably when it comes to setting some constraints upon output.
 
-Taking into account the practical significance of this constraint in different tasks and domains we have developed an improved version of the algorithm [luciv] with the perseverance of all of its properties.
-This is achieved via adaptation and integration of algorithms that solve a novel string problem called "semi-local lcs problem".
+The one such constraint naturally emerges and implicitly presented in various tasks\cite{TODO}. It refers to setting length bounds on matching substrings since minuscule or long matchings may be irrelevant to the subject of search (biologically insignificant, for example).
+% Note that this constraint looks like
 
-Further, we have defined a variant of \emph{AMatch} problem with explicitly set length constraint and presented exact and approximate algorithms for it.
-Recent achievements in RMQ in Monge matrices is the key part of these algorithms.
+To the best of our knowledge, there is no formulation of extension of approximate pattern matching problem where the length of matchings explicitly limits, and, as consequences,  there is no study of this extended problem.
+
+To close this gap, we take the liberty to define several extensions of \emph{AMatch} problem with explicitly set length constraint as well as provide algorithms for solving them. 
+Recent achievements in RMQ in Monge matrices and novel \emph{semi-local lcs} problem is the key part of these algorithms.
+
+We think that these problems with associated algorithms may be of practical use by virtue of natural constraints often occurring in different tasks.
+
+In some ways, these algorithms are based on \cite{luciv2019interactive} algorithm.
+In \cite{luciv2019interactive} the length constraint was given implicitly.
+The algorithm is of interest not only because of the above limitation but also due to the fact that it satisfies some criteria of completeness that useful for some applications\footnote{the criteria is given in \cite{luciv2019interactive}}.
+However, it has an unpleasant time complexity due to this limitation.
+
+Taking into account the practical significance of \cite{luciv2019interactive}, we have developed an improved version of their algorithm with the perseverance of all of its properties based on the same concepts mentioned previously.
 
 Thus, the main contribution of this paper is:
 \begin{itemize}
-    \item Improved version of the algorithm from []
+    \item Improved version of the algorithm from \cite{luciv2019interactive}
+    \item Definition and study of new extensions for  approximate pattern matching problem
     \item Algorithm for the new problem with an explicitly set length constraint on matching substrings 
-    \item Application of  "semi-local problem"
 \end{itemize}
+
+
+
+
+
+% There also exist several variants of this problem that have different objectives with various implicitly or explicitly defined constraints.
+% Although there are plenty of algorithms that solve \emph{AMatch} problem, the amount of algorithms significantly decreases when it comes to setting some constraints upon output. Nonetheless, recently, there was research in which the algorithm with implicitly defined length constraint was presented.
+% This constraint was imposed on the lower and upper bound length of matching substrings.
+% The algorithm is of interest not only because of the above limitation but also due to the fact that it satisfies some criteria of completeness that useful for some applications.
+% However, it has an unpleasant time complexity.
+
+% Taking into account the practical significance of this constraint in different tasks and domains we have developed an improved version of the algorithm [luciv] with the perseverance of all of its properties.
+% This is achieved via adaptation and integration of algorithms that solve a novel string problem called "semi-local lcs problem".
+
+% Further, we have defined a variant of \emph{AMatch} problem with explicitly set length constraint and presented exact and approximate algorithms for it.
+% Recent achievements in RMQ in Monge matrices is the key part of these algorithms.
+
+% Thus, the main contribution of this paper is:
+% \begin{itemize}
+%     \item Improved version of the algorithm from []
+%     \item Algorithm for the new problem with an explicitly set length constraint on matching substrings 
+%     \item Application of  "semi-local problem"
+% \end{itemize}
 
 \red{FILL WHEN OTHER PART IS READY}
 The paper is orgranized as follows.
